@@ -1,6 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+
 
 # Create your views here.
 def index(request):
-    return HttpResponse("First initialization")
+    return render(request, 'altproduct/index.html')
+
+
+def legal(request):
+    return render(request, 'altproduct/legal.html')

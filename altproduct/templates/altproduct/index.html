@@ -1,0 +1,77 @@
+{% extends 'altproduct/base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <header class="masthead text-center text-white d-flex">
+      <div class="container my-auto">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h1 class="text-uppercase">
+              <strong>Du gras oui, mais de qualité !</strong>
+            </h1>
+            <hr>
+          </div>
+          <div class="col-lg-8 mx-auto">
+            <p class="text-faded mb-5">Trouvez un produit de subsitution pour ceux que vous consommez tous les jours</p>
+            <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Find Out More</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="about">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <h2 class="section-heading">Colette et Rémy</h2>
+            <hr class="my-4">
+            <p class="text-muted mb-0">Nous sommes une jeune startup fondée par Remy et Colette Tatou, deux restaurateurs de renom. 
+              Notre restaurant, situé à Montmartre (Paris), compte une cinquantaine de couverts et ne 
+              désemplit pas. Notre spécialité, la ratatouille, nous attire une clientèle internationale 
+              charmée par les délices de ce plat typique.</p>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-md-9 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <img src="{% static 'altproduct/img/colette.jpg' %}" title="Colette" alt="Colette" />
+              <p class="text-muted mb-0 mt-2">Colette</p>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-9 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <img src="{% static 'altproduct/img/remy.jpg' %}" title="Rémy" alt="Rémy" />
+              <p class="text-muted mb-0 mt-2">Rémy</p>
+            </div>
+          </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto text-center">
+            <h2 class="section-heading">Contactez-nous !</h2>
+            <hr class="my-4">
+            <p class="mb-5">Un produit que vous ne trouvez pas ? Une erreur sur le site constatée ? Une envie de nous dire merci ? N'hésitez pas à nous contacter :)</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 ml-auto text-center">
+            <i class="fas fa-phone fa-3x mb-3 sr-contact-1"></i>
+            <p>123-456-6789</p>
+          </div>
+          <div class="col-lg-4 mr-auto text-center">
+            <i class="fas fa-envelope fa-3x mb-3 sr-contact-2"></i>
+            <p>
+              <a href="mailto:your-email@your-domain.com">contact@vegalt.com</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}
+
