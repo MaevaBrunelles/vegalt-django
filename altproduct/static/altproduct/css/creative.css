@@ -106,12 +106,12 @@ img::-moz-selection {
 #mainNav .navbar-brand {
   font-weight: 700;
   text-transform: uppercase;
-  color: #C45525;
+  color: #fff;
   font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
 #mainNav .navbar-brand:focus, #mainNav .navbar-brand:hover {
-  color: #C45525;
+  color: #fff;
 }
 
 #mainNav .navbar-nav > li.nav-item > a.nav-link,
@@ -119,17 +119,17 @@ img::-moz-selection {
   font-size: .9rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #212529;
+  color: #fff;
 }
 
 #mainNav .navbar-nav > li.nav-item > a.nav-link:hover,
 #mainNav .navbar-nav > li.nav-item > a.nav-link:focus:hover {
-  color: #C45525;
+  color: #fff;
 }
 
 #mainNav .navbar-nav > li.nav-item > a.nav-link.active,
 #mainNav .navbar-nav > li.nav-item > a.nav-link:focus.active {
-  color: #C45525 !important;
+  color: #fff !important;
   background-color: transparent;
 }
 
@@ -165,18 +165,18 @@ img::-moz-selection {
     background-color: #fff;
   }
   #mainNav.navbar-shrink .navbar-brand {
-    color: #C45525;
+    color: #fff;
   }
   #mainNav.navbar-shrink .navbar-brand:focus, #mainNav.navbar-shrink .navbar-brand:hover {
-    color: #C45525;
+    color: #fff;
   }
   #mainNav.navbar-shrink .navbar-nav > li.nav-item > a.nav-link,
   #mainNav.navbar-shrink .navbar-nav > li.nav-item > a.nav-link:focus {
-    color: #212529;
+    color: #fff;
   }
   #mainNav.navbar-shrink .navbar-nav > li.nav-item > a.nav-link:hover,
   #mainNav.navbar-shrink .navbar-nav > li.nav-item > a.nav-link:focus:hover {
-    color: #C45525;
+    color: #fff;
   }
 }
 
@@ -186,6 +186,15 @@ header.masthead {
   background-image: url("../img/header.jpg");
   background-position: center center;
   background-size: cover;
+}
+
+header.littlehead {
+  padding-top: 10rem;
+  padding-bottom: calc(10rem - 56px);
+  background-image: url("../img/header.jpg");
+  background-position: center center;
+  background-size: cover;
+  height: 300px;
 }
 
 header.masthead hr {
@@ -264,8 +273,12 @@ header.masthead p {
   margin-top: -150px;
 }
 
+.mt-50{
+  margin-top: 50px !important;
+}
+
 footer{
-  background-color: #C45525;
+  background-color: #DE9440;
   padding: 20px 0;
 }
 
@@ -274,6 +287,6 @@ footer a{
   margin: 0 20px;
 }
 
-a:hover {
+footer a:hover {
   color: #fff;
 }
