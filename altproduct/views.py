@@ -7,4 +7,12 @@ def index(request):
 
 
 def legal(request):
-    return render(request, 'altproduct/legal.html')
+    h1_tag = "Mentions légales"
+    context = {'h1_tag': h1_tag}
+    return render(request, 'altproduct/legal.html', context)
+
+
+def account(request):
+    h1_tag = "Créer un compte"
+    context = {'h1_tag': h1_tag}
+    return render(request, 'altproduct/account.html', context)
