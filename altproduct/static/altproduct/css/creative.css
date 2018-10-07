@@ -277,6 +277,10 @@ header.masthead p {
   margin-top: 50px !important;
 }
 
+#account-form label{
+  width: 150px;
+}
+
 footer{
   background-color: #DE9440;
   padding: 20px 0;

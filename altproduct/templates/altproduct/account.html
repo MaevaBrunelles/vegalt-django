@@ -11,6 +11,32 @@
                 <h2 class="section-heading">Un mail, un mot de passe et c'est parti !</h2>
                 <hr class="my-4">
                 
+                <form id="account-form" action="{% url 'altproduct:account' %}" method="POST" class="mt-50">
+                    {% csrf_token %}
+                    
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}">Prénom</label>
+                        {{ form.first_name }}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}">Nom</label>
+                        {{ form.last_name }}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.email.id_for_label }}">Adresse mail</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.password.id_for_label }}">Mot de passe</label>
+                        {{ form.password }}
+                    </div>
+
+                    <input type="submit" value="Créer mon compte" class="btn btn-primary btn-xl js-scroll-trigger mt-50">
+                </form>
+
             </div>
         </div>
     </div>

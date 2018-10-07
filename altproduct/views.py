@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .forms import AccountCreationForm
 
 
 # Create your views here.
@@ -13,6 +14,16 @@ def legal(request):
 
 
 def account(request):
-    h1_tag = "Créer un compte"
-    context = {'h1_tag': h1_tag}
+
+    if request.method == "POST":
+        pass
+    else:
+        h1_tag = "Créer un compte"
+        account_form = AccountCreationForm()
+
+    context = {
+        'h1_tag': h1_tag,
+        'form': account_form,
+    }
+
     return render(request, 'altproduct/account.html', context)
