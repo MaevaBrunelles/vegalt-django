@@ -16,13 +16,21 @@ def legal(request):
 def account_creation(request):
 
     if request.method == "POST":
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
 
-        user = User.objects.create_user(username, email=email, password=password)
+        form = AccountCreationForm(request.POST)
 
-        return redirect('altproduct:account')
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+
+            user = User.objects.filter(email=email)
+            if not user.exists():
+                user = User.objects.create_user(username, email=email, password=password)
+            else:
+                pass # Return error
+
+            return redirect('altproduct:account')
 
     else:
         h1_tag = "Créer un compte"
