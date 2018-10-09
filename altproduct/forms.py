@@ -1,10 +1,13 @@
-from django.forms import ModelForm, EmailInput
-from .models import User
+from django.forms import ModelForm, EmailInput, PasswordInput
+from django.contrib.auth.models import User
 
 
 class AccountCreationForm(ModelForm):
     class Meta:
 
         model = User
-        fields = ['first_name', 'last_name', 'email', 'password']
-        
+        fields = ['username', 'email', 'password']
+        widgets = {
+            'email': EmailInput(),
+            'password': PasswordInput()
+        }
