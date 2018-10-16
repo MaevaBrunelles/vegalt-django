@@ -281,6 +281,11 @@ header.masthead p {
   width: 150px;
 }
 
+.errorlist li{
+  color: #e5274d;
+  list-style: none;
+}
+
 footer{
   background-color: #DE9440;
   padding: 20px 0;

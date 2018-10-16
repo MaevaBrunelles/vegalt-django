@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .forms import AccountCreationForm
+from .forms import RegisterForm
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 
 def index(request):
@@ -13,35 +14,42 @@ def legal(request):
     return render(request, 'altproduct/legal.html', context)
 
 
-def account_creation(request):
+def register(request):
+
+    context = {
+        'h1_tag': 'Créer un compte',
+        }
 
     if request.method == "POST":
 
-        form = AccountCreationForm(request.POST)
+        register_form = RegisterForm(request.POST)
 
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
+        if register_form.is_valid():
+            username = register_form.cleaned_data['username']
+            email = register_form.cleaned_data['email']
+            password = register_form.cleaned_data['password']
 
             user = User.objects.filter(email=email)
             if not user.exists():
-                user = User.objects.create_user(username, email=email, password=password)
-            else:
-                pass # Return error
+                User.objects.create_user(username, email=email, password=password)
+                user = authenticate(username=username, password=password)
 
-            return redirect('altproduct:account')
+                context = {
+                    'user': user,
+                }
+
+                return redirect('altproduct:account', context)
+
+        else:
+            context['errors'] = register_form.errors.items()
 
     else:
-        h1_tag = "Créer un compte"
-        account_form = AccountCreationForm()
+        register_form = RegisterForm()
 
-        context = {
-            'h1_tag': h1_tag,
-            'form': account_form,
-        }
+    context['form'] = register_form
 
-        return render(request, 'altproduct/account.html', context)
+    return render(request, 'altproduct/account.html', context)
+
 
 def account(request):
     #h1_tag = "Ahoy " + username + " !"
