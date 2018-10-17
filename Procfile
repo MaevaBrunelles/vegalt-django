@@ -1,1 +1,1 @@
-web: gunicorn altproduct.wsgi
+web: gunicorn vegalt.wsgi

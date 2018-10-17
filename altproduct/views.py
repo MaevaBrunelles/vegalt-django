@@ -51,6 +51,7 @@ def login(request):
     context = {
         'h1_tag': 'Connexion à votre compte',
         'h2_tag': 'Entrez vos identifiants de connexion pour accéder à votre compte',
+        'next': 'monurl'
     }
 
     # if request.method == "POST":
