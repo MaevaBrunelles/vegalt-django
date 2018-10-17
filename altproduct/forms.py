@@ -10,7 +10,6 @@ class RegisterForm(ModelForm):
     """ Form to create an account. Based on Django User model. """
 
     class Meta:
-
         model = User
         fields = ['username', 'email', 'password']
         widgets = {
@@ -29,3 +28,12 @@ class RegisterForm(ModelForm):
 
         return email
 
+
+# class LoginForm(ModelForm):
+
+#     class Meta:
+#         model = User
+#         fields = ['username', 'password']
+#         widgets = {
+#             'password': PasswordInput()
+#         }

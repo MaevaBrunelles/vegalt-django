@@ -1,0 +1,1 @@
+web: gunicorn altproduct.wsgi

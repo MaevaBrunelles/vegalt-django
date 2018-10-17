@@ -277,7 +277,7 @@ header.masthead p {
   margin-top: 50px !important;
 }
 
-#account-form label{
+#register-form label, #login-form label{
   width: 150px;
 }
 

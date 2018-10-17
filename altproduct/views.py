@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 
 def index(request):
@@ -17,6 +18,7 @@ def register(request):
 
     context = {
         'h1_tag': 'Créer un compte',
+        'h2_tag': 'C\'est facile et rapide !',
         }
 
     if request.method == "POST":
@@ -31,7 +33,7 @@ def register(request):
             user = User.objects.filter(email=email)
             if not user.exists():
                 user = User.objects.create_user(username, email=email, password=password)
-                return redirect('altproduct:account')
+                return redirect('altproduct:login')
 
         else:
             context['errors'] = register_form.errors.items()
@@ -39,9 +41,37 @@ def register(request):
     else:
         register_form = RegisterForm()
 
-    context['form'] = register_form
+    context['register_form'] = register_form
 
     return render(request, 'altproduct/account.html', context)
+
+
+def login(request):
+
+    context = {
+        'h1_tag': 'Connexion à votre compte',
+        'h2_tag': 'Entrez vos identifiants de connexion pour accéder à votre compte',
+    }
+
+    # if request.method == "POST":
+    #     login_form = LoginForm(request.POST)
+
+    #     if login_form.is_valid():
+    #         username = login_form.cleaned_data['username']
+    #         password = login_form.cleaned_data['password']
+
+    #         try:
+    #             authenticate(username=username, password=password)
+    #         except:
+    #             print("marche pas")
+    
+    # else:
+    #     login_form = LoginForm()
+
+    # context['login_form'] = login_form
+
+    # return render(request, 'altproduct/account.html', context)
+
 
 def account(request):
     #h1_tag = "Ahoy " + username + " !"
