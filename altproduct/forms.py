@@ -3,6 +3,7 @@
 from django.forms import ModelForm, EmailInput, PasswordInput, ValidationError
 from django.contrib.auth.models import User
 from django.forms.utils import ErrorList
+from django.utils.html import format_html
 
 
 class RegisterForm(ModelForm):
@@ -27,3 +28,4 @@ class RegisterForm(ModelForm):
             raise ValidationError(u'Un utilisateur avec cette adresse email existe déjà.')
 
         return email
+

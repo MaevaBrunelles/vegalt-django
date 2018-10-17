@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
 
 
 def index(request):
@@ -31,14 +30,8 @@ def register(request):
 
             user = User.objects.filter(email=email)
             if not user.exists():
-                User.objects.create_user(username, email=email, password=password)
-                user = authenticate(username=username, password=password)
-
-                context = {
-                    'user': user,
-                }
-
-                return redirect('altproduct:account', context)
+                user = User.objects.create_user(username, email=email, password=password)
+                return redirect('altproduct:account')
 
         else:
             context['errors'] = register_form.errors.items()
@@ -49,7 +42,6 @@ def register(request):
     context['form'] = register_form
 
     return render(request, 'altproduct/account.html', context)
-
 
 def account(request):
     #h1_tag = "Ahoy " + username + " !"

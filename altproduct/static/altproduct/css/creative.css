@@ -281,9 +281,8 @@ header.masthead p {
   width: 150px;
 }
 
-.errorlist li{
+.errorform{
   color: #e5274d;
-  list-style: none;
 }
 
 footer{
