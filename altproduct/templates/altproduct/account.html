@@ -51,6 +51,41 @@
                     <input type="submit" value="Créer mon compte" class="btn btn-primary btn-xl js-scroll-trigger mt-50">
                 </form>
 
+                {% elif login_form %}
+                <form id="login-form" action="{% url 'altproduct:login' %}" method="POST" class="mt-50">
+                    {% csrf_token %}
+
+                    {{ login_form.non_field_errors }}
+                    <div class="fieldWrapper"> 
+                        
+                        <label for="{{ form.username.id_for_label }}">Nom d'utilisateur</label>
+                        {{ login_form.username }}
+                        {% if login_form.username.errors %}
+                            {% for error in login_form.username.errors %}
+                                <p class="errorform">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    
+                    </div>
+
+                    <div class="fieldWrapper">
+                        <label for="{{ form.password.id_for_label }}">Mot de passe</label>
+                        {{ login_form.password }}
+                        {% if login_form.password.errors %}
+                            {% for error in login_form.password.errors %}
+                                <p class="errorform">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <input type="submit" value="Connexion" class="btn btn-primary btn-xl js-scroll-trigger mt-50">
+                </form>
+
+                {% else %}
+
+                    {{ user.email }}
+
+                {% endif %}
             </div>
         </div>
     </div>

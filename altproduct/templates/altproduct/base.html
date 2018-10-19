@@ -41,15 +41,27 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="{% url 'altproduct:register' %}">Créer un compte</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="">Mes produits</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="">Déconnexion</a>
-            </li>
+
+            {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link js-scroll-trigger" href="{% url 'altproduct:account' %}"><i class="fas fa-user"></i></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link js-scroll-trigger" href=""><i class="fas fa-feather-alt"></i></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link js-scroll-trigger" href=""><i class="fas fa-sign-out-alt"></i></a>
+              </li>
+
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link js-scroll-trigger" href="{% url 'altproduct:register' %}">Créer un compte</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link js-scroll-trigger" href="{% url 'altproduct:account_login' %}">Connexion</a>
+              </li>
+            {% endif %}
+
           </ul>
         </div>
       </div>
