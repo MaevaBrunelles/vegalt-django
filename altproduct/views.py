@@ -34,11 +34,7 @@ def register(request):
             user = User.objects.filter(email=email)
             if not user.exists():
                 user = User.objects.create_user(username, email=email, password=password)
-<<<<<<< HEAD
-                return redirect('altproduct:account')
-=======
                 return redirect('altproduct:account_login')
->>>>>>> c72849d... Login feature + icons in menu
 
         else:
             context['errors'] = register_form.errors.items()
@@ -50,8 +46,6 @@ def register(request):
 
     return render(request, 'altproduct/account.html', context)
 
-<<<<<<< HEAD
-=======
 
 class CustomLoginView(LoginView):
 
@@ -65,11 +59,7 @@ class CustomLoginView(LoginView):
 
         return context
 
-    #def get_success_url(self):
-    #    return reverse_lazy('altproduct:index')
 
-
->>>>>>> c72849d... Login feature + icons in menu
 def account(request):
 
     context = {

@@ -12,16 +12,17 @@
                 <h2 class="section-heading">Un mail, un mot de passe et c'est parti !</h2>
                 <hr class="my-4">
                 
+                {% if register_form %}
                 <form id="account-form" action="{% url 'altproduct:register' %}" method="POST" class="mt-50">
                     {% csrf_token %}
 
-                    {{ form.non_field_errors }}
+                    {{ register_form.non_field_errors }}
                     <div class="fieldWrapper"> 
                         
-                        <label for="{{ form.username.id_for_label }}">Nom d'utilisateur</label>
-                        {{ form.username }}
-                        {% if form.username.errors %}
-                            {% for error in form.username.errors %}
+                        <label for="{{ register_form.username.id_for_label }}">Nom d'utilisateur</label>
+                        {{ register_form.username }}
+                        {% if register_form.username.errors %}
+                            {% for error in register_form.username.errors %}
                                 <p class="errorform">{{ error }}</p>
                             {% endfor %}
                         {% endif %}
@@ -29,56 +30,26 @@
                     </div>
 
                     <div class="fieldWrapper">
-                        <label for="{{ form.email.id_for_label }}">Adresse email</label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                            {% for error in form.email.errors %}
+                        <label for="{{ register_form.email.id_for_label }}">Adresse email</label>
+                        {{ register_form.email }}
+                        {% if register_form.email.errors %}
+                            {% for error in register_form.email.errors %}
                                 <p class="errorform">{{ error }}</p>
                             {% endfor %}
                         {% endif %}
                     </div>
 
                     <div class="fieldWrapper">
-                        <label for="{{ form.password.id_for_label }}">Mot de passe</label>
-                        {{ form.password }}
-                        {% if form.password.errors %}
-                            {% for error in form.password.errors %}
+                        <label for="{{ register_form.password.id_for_label }}">Mot de passe</label>
+                        {{ register_form.password }}
+                        {% if register_form.password.errors %}
+                            {% for error in register_form.password.errors %}
                                 <p class="errorform">{{ error }}</p>
                             {% endfor %}
                         {% endif %}
                     </div>
 
                     <input type="submit" value="Créer mon compte" class="btn btn-primary btn-xl js-scroll-trigger mt-50">
-                </form>
-
-                {% elif login_form %}
-                <form id="login-form" action="{% url 'altproduct:login' %}" method="POST" class="mt-50">
-                    {% csrf_token %}
-
-                    {{ login_form.non_field_errors }}
-                    <div class="fieldWrapper"> 
-                        
-                        <label for="{{ form.username.id_for_label }}">Nom d'utilisateur</label>
-                        {{ login_form.username }}
-                        {% if login_form.username.errors %}
-                            {% for error in login_form.username.errors %}
-                                <p class="errorform">{{ error }}</p>
-                            {% endfor %}
-                        {% endif %}
-                    
-                    </div>
-
-                    <div class="fieldWrapper">
-                        <label for="{{ form.password.id_for_label }}">Mot de passe</label>
-                        {{ login_form.password }}
-                        {% if login_form.password.errors %}
-                            {% for error in login_form.password.errors %}
-                                <p class="errorform">{{ error }}</p>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-
-                    <input type="submit" value="Connexion" class="btn btn-primary btn-xl js-scroll-trigger mt-50">
                 </form>
 
                 {% else %}

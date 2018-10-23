@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/altproduct/"
 
 
 # Quick-start development settings - unsuitable for production
@@ -55,7 +57,7 @@ ROOT_URLCONF = 'vegalt.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates/altproduct/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -105,6 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_REDIRECT_URL = ''
+LOGOUT_REDIRECT_URL = 'altproduct:index'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
