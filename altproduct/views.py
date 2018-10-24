@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .forms import RegisterForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
 
 
 def index(request):
@@ -33,7 +35,8 @@ def register(request):
             user = User.objects.filter(email=email)
             if not user.exists():
                 user = User.objects.create_user(username, email=email, password=password)
-                return redirect('altproduct:login')
+
+                return redirect('altproduct:account_login')
 
         else:
             context['errors'] = register_form.errors.items()
@@ -46,39 +49,23 @@ def register(request):
     return render(request, 'altproduct/account.html', context)
 
 
-def login(request):
+class CustomLoginView(LoginView):
 
-    context = {
-        'h1_tag': 'Connexion à votre compte',
-        'h2_tag': 'Entrez vos identifiants de connexion pour accéder à votre compte',
-        'next': 'monurl'
-    }
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'h1_tag': 'Connexion à votre compte',
+            'h2_tag': 'Entrez vos identifiants de connexion pour accéder à votre compte',
+            'next': reverse_lazy('altproduct:account')
+        })
 
-    # if request.method == "POST":
-    #     login_form = LoginForm(request.POST)
-
-    #     if login_form.is_valid():
-    #         username = login_form.cleaned_data['username']
-    #         password = login_form.cleaned_data['password']
-
-    #         try:
-    #             authenticate(username=username, password=password)
-    #         except:
-    #             print("marche pas")
-    
-    # else:
-    #     login_form = LoginForm()
-
-    # context['login_form'] = login_form
-
-    # return render(request, 'altproduct/account.html', context)
+        return context
 
 
 def account(request):
-    #h1_tag = "Ahoy " + username + " !"
 
     context = {
-        'h1_tag': "LOL",
+        'h1_tag': "Ahoy ",
     }
 
     return render(request, 'altproduct/account.html', context)

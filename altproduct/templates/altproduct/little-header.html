@@ -2,9 +2,15 @@
     <div class="container my-auto">
         <div class="row">
             <div class="col-lg-10 mx-auto">
-                <h1 class="text-uppercase">
-                <strong>{{ h1_tag }}</strong>
-                </h1>
+                {% if user.is_authenticated %}
+                    <h1 class="text-uppercase">
+                        <strong>{{ h1_tag }} {{ user.username }} !</strong>
+                    </h1>
+                {% else %}
+                    <h1 class="text-uppercase">
+                        <strong>{{ h1_tag }}</strong>
+                    </h1>
+                {% endif %}
             </div>
         </div>
     </div>
