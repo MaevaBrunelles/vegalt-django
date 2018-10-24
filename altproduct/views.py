@@ -20,6 +20,7 @@ def register(request):
 
     context = {
         'h1_tag': 'Créer un compte',
+        'h2_tag': 'C\'est facile et rapide !',
         }
 
     if request.method == "POST":
@@ -34,6 +35,7 @@ def register(request):
             user = User.objects.filter(email=email)
             if not user.exists():
                 user = User.objects.create_user(username, email=email, password=password)
+
                 return redirect('altproduct:account_login')
 
         else:
@@ -42,7 +44,7 @@ def register(request):
     else:
         register_form = RegisterForm()
 
-    context['form'] = register_form
+    context['register_form'] = register_form
 
     return render(request, 'altproduct/account.html', context)
 
