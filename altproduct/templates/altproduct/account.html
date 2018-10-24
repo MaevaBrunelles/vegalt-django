@@ -11,7 +11,7 @@
 
                 <h2 class="section-heading">{{ h2_tag }}</h2>
                 <hr class="my-4">
-                
+
                 {% if register_form %}
                 <form id="account-form" action="{% url 'altproduct:register' %}" method="POST" class="mt-50">
                     {% csrf_token %}
@@ -51,8 +51,8 @@
                 </form>
 
                 {% else %}
-
-                    {{ user.email }}
+                    <p>Voici l'adresse mail rattachée à votre compte :</p>
+                    <p class="alert alert-secondary account-email">{{ user.email }}</p>
 
                 {% endif %}
             </div>

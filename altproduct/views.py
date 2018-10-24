@@ -20,7 +20,7 @@ def register(request):
 
     context = {
         'h1_tag': 'Créer un compte',
-        'h2_tag': 'C\'est facile et rapide !',
+        'h2_tag': 'Un nom, un mot de passe et c\'est parti !'
         }
 
     if request.method == "POST":
@@ -65,7 +65,8 @@ class CustomLoginView(LoginView):
 def account(request):
 
     context = {
-        'h1_tag': "Ahoy ",
+        'h1_tag': 'Ahoy',
+        'h2_tag': 'Paramètres de votre compte',
     }
 
     return render(request, 'altproduct/account.html', context)
