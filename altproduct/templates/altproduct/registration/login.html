@@ -12,9 +12,25 @@
                 <h2 class="section-heading">{{ h2_tag }}</h2>
                 <hr class="my-4">
 
-                <form id="account-form" method="post" action="{% url 'altproduct:account_login' %}?next={{ next }}">
+                <form id="account-form" method="POST" action="{% url 'altproduct:account_login' %}?next={{ next }}">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    
+                    <div class="fieldWrapper">
+                        <label for="{{ form.username.id_for_label }}">Nom d'utilisateur</label>
+                        {{ form.username }}
+                    </div>
+
+                    <div class="fieldWrapper">
+                        <label for="{{ form.password.id_for_label }}">Mot de passe</label>
+                        {{ form.password }}
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                            <p class="errorform">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+
                     <input type="submit" value="Se connecter" class="btn btn-primary btn-xl js-scroll-trigger mt-50">
                 </form>
 
