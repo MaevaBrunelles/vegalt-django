@@ -12,7 +12,7 @@
                 <h2 class="section-heading">{{ h2_tag }}</h2>
                 <hr class="my-4">
 
-                <form id="login-form" method="post" action="{% url 'altproduct:account_login' %}?next={{ next }}">
+                <form id="account-form" method="post" action="{% url 'altproduct:account_login' %}?next={{ next }}">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <input type="submit" value="Se connecter" class="btn btn-primary btn-xl js-scroll-trigger mt-50">

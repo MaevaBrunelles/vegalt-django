@@ -12,7 +12,7 @@ class ViewsTestCase(TestCase):
         """ Login page returns 200 """
 
         response = self.client.get(reverse('altproduct:account_login'))
-        self.assertEqual(response.status_code, 200)    
+        self.assertEqual(response.status_code, 200)
 
     def test_bad_url_returns_404(self):
         """ Bad URL returns 404 """

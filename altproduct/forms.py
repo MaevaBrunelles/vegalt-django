@@ -2,14 +2,14 @@
 
 from django.forms import ModelForm, EmailInput, PasswordInput, ValidationError
 from django.contrib.auth.models import User
-from django.forms.utils import ErrorList
-from django.utils.html import format_html
 
 
 class RegisterForm(ModelForm):
     """ Form to create an account. Based on Django User model. """
 
     class Meta:
+        """ Get the Django User attributes. """
+
         model = User
         fields = ['username', 'email', 'password']
         widgets = {
@@ -27,13 +27,3 @@ class RegisterForm(ModelForm):
             raise ValidationError(u'Un utilisateur avec cette adresse email existe déjà.')
 
         return email
-
-
-# class LoginForm(ModelForm):
-
-#     class Meta:
-#         model = User
-#         fields = ['username', 'password']
-#         widgets = {
-#             'password': PasswordInput()
-#         }
