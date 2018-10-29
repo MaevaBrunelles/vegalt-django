@@ -42,9 +42,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
 
-            <form id="form-search-nav" action="" method="GET">
-              {% csrf_token %}
-                    
+            <form id="form-search-nav" action="{% url 'altproduct:alternative' %}" method="GET">                    
               {{ search_form.product }}
             </form>
 

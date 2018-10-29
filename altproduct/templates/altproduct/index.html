@@ -15,11 +15,8 @@
           <div class="col-lg-8 mx-auto">
             <p class="text-faded mb-5">Trouvez un produit de subsitution pour ceux que vous consommez tous les jours</p>
             
-            <form id="form-search" action="" method="GET" class="form-inline">
-              {% csrf_token %}
-                    
+            <form id="form-search" action="{% url 'altproduct:alternative' %}" method="GET" class="form-inline">                    
               {{ search_form.product }}
-
               <button type="submit" class="btn btn-primary btn-search">Chercher une alternative</button>
             </form>
             

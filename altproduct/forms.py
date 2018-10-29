@@ -36,5 +36,13 @@ class SearchForm(Form):
 
     product = CharField(
         max_length=200,
-        widget=TextInput(attrs={'placeholder': 'Entrez le produit que vous voulez remplacer'})
+        widget=TextInput(attrs={
+            'placeholder': 'Entrez le produit que vous voulez remplacer',
+            })
     )
+
+    def add_prefix(self, field_name):
+        """ Custom field name to have the URL parameter in FR """
+
+        field_name = "produit"
+        return super(SearchForm, self).add_prefix(field_name)

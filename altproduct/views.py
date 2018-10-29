@@ -89,5 +89,14 @@ def account(request):
     return render(request, 'altproduct/account.html', context)
 
 
-def alternative(request, product):
-    pass
+def alternative(request):
+    
+    searched_product = request.GET.get('produit')
+
+    context = {
+        'h1_tag': searched_product,
+        'h2_tag': 'Vous pouvez remplacer cet aliment par :',
+    }
+
+    return render(request, 'altproduct/alternative.html', context)
+ 
