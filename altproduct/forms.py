@@ -1,6 +1,8 @@
 """ Forms file """
 
-from django.forms import ModelForm, EmailInput, PasswordInput, ValidationError
+from django.forms import (
+    ModelForm, EmailInput, PasswordInput, ValidationError, Form, CharField, TextInput
+)
 from django.contrib.auth.models import User
 
 
@@ -27,3 +29,12 @@ class RegisterForm(ModelForm):
             raise ValidationError(u'Un utilisateur avec cette adresse email existe déjà.')
 
         return email
+
+
+class SearchForm(Form):
+    """ Form to search a product alternative. Display on nav and index page. """
+
+    product = CharField(
+        max_length=200,
+        widget=TextInput(attrs={'placeholder': 'Entrez le produit que vous voulez remplacer'})
+    )

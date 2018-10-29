@@ -42,6 +42,12 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
 
+            <form id="form-search-nav" action="" method="GET">
+              {% csrf_token %}
+                    
+              {{ search_form.product }}
+            </form>
+
             {% if user.is_authenticated %}
               <li class="nav-item">
                 <a class="nav-link js-scroll-trigger" href="{% url 'altproduct:account' %}"><i class="fas fa-user"></i></a>

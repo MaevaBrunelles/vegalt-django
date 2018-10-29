@@ -5,13 +5,17 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 
-from .forms import RegisterForm
+from .forms import RegisterForm, SearchForm
 
 
 def index(request):
     """ Home route. """
 
-    return render(request, 'altproduct/index.html')
+    context = {
+        'h1_tag': 'Du gras oui, mais de qualité !',
+        'search_form': SearchForm()
+    }
+    return render(request, 'altproduct/index.html', context)
 
 
 def legal(request):
@@ -83,3 +87,7 @@ def account(request):
     }
 
     return render(request, 'altproduct/account.html', context)
+
+
+def alternative(request, product):
+    pass
