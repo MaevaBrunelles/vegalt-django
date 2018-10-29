@@ -1,15 +1,7 @@
 """ Models declaration """
 
 from django.db import models
-
-
-class User(models.Model):
-    """ User model. The base for authentification. """
-
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=100)
-    password = models.CharField(max_length=50)
+from django.contrib.auth.models import User
 
 
 class Category(models.Model):
@@ -45,7 +37,7 @@ class NutriGrade(models.Model):
 
 
 class Product(models.Model):
-    """ Product model. This is the main model : it have link with all other models. """
+    """ Product model. This is the main model : it has link with all other models. """
 
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=30)

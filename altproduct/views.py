@@ -1,37 +1,47 @@
+""" Views file """
+
 from django.shortcuts import render, redirect
-from .forms import RegisterForm
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 
+from .forms import RegisterForm
+
 
 def index(request):
+    """ Home route. """
+
     return render(request, 'altproduct/index.html')
 
 
 def legal(request):
+    """ Legal route. """
+
     h1_tag = "Mentions légales"
     context = {'h1_tag': h1_tag}
     return render(request, 'altproduct/legal.html', context)
 
 
 def register(request):
+    """ Account creation route. """
 
     context = {
         'h1_tag': 'Créer un compte',
-        'h2_tag': 'C\'est facile et rapide !',
+        'h2_tag': 'Un nom, un mot de passe et c\'est parti !'
         }
 
+    # If the register form is posted
     if request.method == "POST":
 
         register_form = RegisterForm(request.POST)
 
+        # Verify all datas posted
         if register_form.is_valid():
             username = register_form.cleaned_data['username']
             email = register_form.cleaned_data['email']
             password = register_form.cleaned_data['password']
 
+            # Create the new user in database if it's not existing
             user = User.objects.filter(email=email)
             if not user.exists():
                 user = User.objects.create_user(username, email=email, password=password)
@@ -41,6 +51,7 @@ def register(request):
         else:
             context['errors'] = register_form.errors.items()
 
+    # If not, create the empty register form
     else:
         register_form = RegisterForm()
 
@@ -50,6 +61,7 @@ def register(request):
 
 
 class CustomLoginView(LoginView):
+    """ Subclass from Django LoginView. Personnalized account login route. """
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -63,9 +75,11 @@ class CustomLoginView(LoginView):
 
 
 def account(request):
+    """ Account route """
 
     context = {
-        'h1_tag': "Ahoy ",
+        'h1_tag': 'Ahoy',
+        'h2_tag': 'Paramètres de votre compte',
     }
 
     return render(request, 'altproduct/account.html', context)
