@@ -1,6 +1,7 @@
 """ Views file """
 
 import requests
+import random
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
@@ -101,20 +102,41 @@ def alternative(request):
 
     searched_product = request.GET.get('produit')
 
-    #result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + searched_product + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
-    result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + searched_product + "&tagtype_0=categories&tag_contains_0=contains&tag_0=" + searched_product + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
-    
-    products_details = result.json()
-
-    #product_name = products_details["products"][0]["product_name_fr"]
-    product_img = products_details["products"][0]["image_front_url"]
-
     context = {
         'h1_tag': searched_product,
-        'h2_tag': 'Vous pouvez remplacer cet aliment par :',
         'search_form': SearchForm(),
-        'searched_product_img': product_img,
     }
+
+    # tag_0 == category
+    result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + searched_product + "&tagtype_0=categories&tag_contains_0=contains&tag_0=" + searched_product + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
+    products_details = result.json()
+
+    if products_details['count'] == 0:
+        context['h2_tag'] = 'Votre recherche n\'a retourné aucun résultat'
+        context['message'] = 'Essayez une nouvelle recherche avec un autre produit.'
+
+    else:
+        product_img = products_details["products"][0]["image_front_url"]
+        context['searched_product_img'] = product_img
+
+        alt_category = searched_product + " vegetal"
+        result2 = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=" + alt_category + "&sort_by=unique_scans_n&page_size=1000&axis_x=energy&axis_y=products_n&action=display&json=1")
+        alt_products = result2.json()
+
+        if alt_products['count'] == 0:
+            context['h2_tag'] = 'Aucun produit alternatif n\'a été trouvé :('
+            context['message'] = 'Essayez une nouvelle recherche avec un autre produit.'
+        else:
+            random_alt_products = []
+            for _ in range(6):
+                alt_product = random.choice(alt_products['products'])
+                if 'product_name_fr' in alt_product and 'image_front_url' in alt_product:
+                    random_alt_products.append(alt_product)
+                else:
+                    continue
+
+            context['h2_tag'] = 'Vous pouvez remplacer cet aliment par :'
+            context['alt_products'] = random_alt_products
 
     return render(request, 'altproduct/alternative.html', context)
  

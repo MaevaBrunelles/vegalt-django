@@ -309,7 +309,23 @@
    width: 50%;
    display: inline-block;
  }
+
+ .product-card{
+    width: 18rem; 
+    float: left; 
+    margin: 50px 40px;
+ }
+
+ .product-card-img {
+    height: 250px;
+    background: transparent no-repeat center;
+    background-size: cover;
+}
  
+  .product-card-title{
+    height: 120px;
+  }
+
  footer{
    background-color: #DE9440;
    padding: 20px 0;

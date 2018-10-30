@@ -11,8 +11,24 @@
 
                 <h2 class="section-heading">{{ h2_tag }}</h2>
                 <hr class="my-4">
+
+                {% if message %}
+                    <p>{{ message }}</p>
+                {% endif %}
                 
-                {{ product_details }}
+                {% for product in alt_products %}
+                    <div class="card product-card">
+                        <div class="product-card-img" style="background-image: url({{ product.image_front_url }})"></div>
+                        <div class="card-body">
+                            <h3 class="card-title product-card-title">{{ product.product_name_fr }}</h3>
+                            <a href="#" class="btn btn-primary">Détail</a>
+                        </div>
+                        <div class="card-footer">
+                            <small>Favori</small>
+                        </div>
+                        {% if forloop.counter|divisibleby:3 %}<div class="clearfix"></div>{% endif %}
+                    </div>
+                {% endfor %}
 
             </div>
         </div>
