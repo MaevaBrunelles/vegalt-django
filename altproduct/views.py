@@ -1,5 +1,7 @@
 """ Views file """
 
+import requests
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
@@ -21,8 +23,9 @@ def index(request):
 def legal(request):
     """ Legal route. """
 
-    h1_tag = "Mentions légales"
-    context = {'h1_tag': h1_tag}
+    context = {
+        'h1_tag': 'Mentions légales',
+    }
     return render(request, 'altproduct/legal.html', context)
 
 
@@ -90,12 +93,22 @@ def account(request):
 
 
 def alternative(request):
-    
+    """ Alternative route, when a product is searched """
+
     searched_product = request.GET.get('produit')
+
+    #result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + searched_product + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
+    result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + searched_product + "&tagtype_0=categories&tag_contains_0=contains&tag_0=" + searched_product + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
+    
+    products_details = result.json()
+
+    #product_name = products_details["products"][0]["product_name_fr"]
+    product_img = products_details["products"][0]["image_front_url"]
 
     context = {
         'h1_tag': searched_product,
         'h2_tag': 'Vous pouvez remplacer cet aliment par :',
+        'searched_product_img': product_img,
     }
 
     return render(request, 'altproduct/alternative.html', context)
