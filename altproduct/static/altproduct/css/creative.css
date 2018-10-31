@@ -326,6 +326,10 @@
     height: 120px;
   }
 
+  .product-detail-img{
+    margin: 20px 40px;
+  }
+
  footer{
    background-color: #DE9440;
    padding: 20px 0;

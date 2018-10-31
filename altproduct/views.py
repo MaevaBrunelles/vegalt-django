@@ -140,3 +140,28 @@ def alternative(request):
 
     return render(request, 'altproduct/alternative.html', context)
  
+
+def product_detail(request, product_id, product_name):
+    """ Product detail route. """
+    
+    result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + product_name + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
+    products = result.json()
+
+    product_detail = {}
+    for product in products['products']:
+        if product['id'] == product_id:
+            #product_nutrigrade = product_details['']
+            product_detail['url'] = product['url']
+            product_detail['nutriscore'] = product['nutrition_grade_fr']
+            product_detail['nutrition_img'] = product['image_nutrition_small_url']
+            product_img = product['image_front_url']
+
+    context = {
+        'h1_tag': product_name,
+        'h2_tag': 'Informations nutritionnelles',
+        'search_form': SearchForm(),
+        'product': product_detail,
+        'searched_product_img': product_img,
+    }
+
+    return render(request, 'altproduct/product.html', context)
