@@ -8,6 +8,7 @@ class Category(models.Model):
     """ Product category model. Consider that there is only one category per product. """
 
     name = models.CharField(max_length=50)
+    alternative = models.BooleanField(default=None)
 
 
 class Brand(models.Model):
