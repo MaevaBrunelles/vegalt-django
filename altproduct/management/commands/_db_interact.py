@@ -11,14 +11,21 @@ class DbInteract():
         category = Category.objects.filter(name=name)
 
         if not category.exists():
-            Category.objects.create(name=name, alternative=alternative)
+            category_registered = Category.objects.create(name=name, alternative=alternative)
+        else:
+            category_registered = category.first()
+
+        return category_registered
+
+        
+        #return category_registered if category_registered else category
     
-    def get_category_id(self, name):
-        """ Return the category_id for product registration """
+    # def get_category_id(self, name):
+    #     """ Return the category_id for product registration """
 
-        category = Category.objects.get(name=name)
+    #     category = Category.objects.get(name=name)
 
-        return category.id
+    #     return category.id
 
     def insert_brand(self, name):
         """ Registration of brand in a SQL table """
@@ -26,7 +33,11 @@ class DbInteract():
         brand = Brand.objects.filter(name=name)
 
         if not brand.exists():
-            Brand.objects.create(name=name)
+            brand_registered = Brand.objects.create(name=name)
+        else:
+            brand_registered = brand.first()
+
+        return brand_registered
     
     def insert_store(self, name):
         """ Registration of stores in a SQL table """
@@ -34,15 +45,23 @@ class DbInteract():
         store = Store.objects.filter(name=name)
 
         if not store.exists():
-            Store.objects.create(name=name)
+            store_registered = Store.objects.create(name=name)
+        else:
+            store_registered = store.first()
+        
+        return store_registered
 
     def insert_nutrigrade(self, nutrigrade):
-        """ Registration of stores in a SQL table """
+        """ Registration of nutrigrades in a SQL table """
 
         nutrigrade = NutriGrade.objects.filter(nutrigrade=nutrigrade)
 
         if not nutrigrade.exists():
-            NutriGrade.objects.create(nutrigrade=nutrigrade)
+            nutrigrade_registered = NutriGrade.objects.create(nutrigrade=nutrigrade)
+        else:
+            nutrigrade_registered = nutrigrade.first()
+
+        return nutrigrade_registered
 
 
     def insert_product(self, product_name, description, brand, store, link, nutrigrade, category_id):

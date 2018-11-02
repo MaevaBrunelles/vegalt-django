@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         products_categories = [
             {
-                "name": "Steaks hachés",
+                "name": "Steaks hachés 2",
                 "alternative": False,
             },
             {
@@ -49,14 +49,14 @@ class Command(BaseCommand):
         for category in products_categories:
 
             # Registration of each category in a SQL table
-            database.insert_category(category["name"], category["alternative"])
+            category_reference = database.insert_category(category["name"], category["alternative"])
 
             # API call to get all food products for each category
             result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=" + category["name"] + "&sort_by=unique_scans_n&page_size=1000&axis_x=energy&axis_y=products_n&action=display&json=1")
             products_details = result.json()
 
             # Get the category_id for product registration
-            category_id = database.get_category_id(category["name"])
+            #category_registered = database.get_category_id(category["name"])
 
             for product in products_details["products"]:
 
@@ -64,15 +64,15 @@ class Command(BaseCommand):
                 # If not, put on None (= NULL in the database)
                 store = "stores"
                 store = product[store] if store in product else None
-                database.insert_store(store)
+                store = database.insert_store(store)
 
                 brand = "brands"
                 brand = product[brand] if brand in product else None
-                database.insert_brand(brand)
+                brand = database.insert_brand(brand)
 
                 nutrigrade = "nutrition_grades"
                 nutrigrade = product[nutrigrade] if nutrigrade in product else None
-                database.insert_nutrigrade(nutrigrade)
+                nutrigrade = database.insert_nutrigrade(nutrigrade)
 
                 name = "product_name"
                 product_name = product[name] if name in product else None
@@ -83,7 +83,7 @@ class Command(BaseCommand):
                 url = "url"
                 url = product[url] if url in product else None
 
-                database.insert_product(product_name, description, brand, store, url, nutrigrade, category_id["id"])
+                database.insert_product(product_name, description, brand, store, url, nutrigrade, category_reference)
 
                 # Just to monitore
                 print(url)
