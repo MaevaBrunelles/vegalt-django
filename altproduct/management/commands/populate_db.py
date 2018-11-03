@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         products_categories = [
             {
-                "name": "Steaks hachés 2",
+                "name": "Steaks hachés",
                 "alternative": False,
             },
             {
@@ -69,10 +69,16 @@ class Command(BaseCommand):
                 brand = "brands"
                 brand = product[brand] if brand in product else None
                 brand = database.insert_brand(brand)
+                
+                url = "url"
+                url = product[url] if url in product else None
 
+                # Just to monitore
+                print(url)
+                
                 nutrigrade = "nutrition_grades"
-                nutrigrade = product[nutrigrade] if nutrigrade in product else None
-                nutrigrade = database.insert_nutrigrade(nutrigrade)
+                score = product[nutrigrade] if nutrigrade in product else None
+                nutrigrade = database.insert_nutrigrade(score)
 
                 name = "product_name"
                 product_name = product[name] if name in product else None
@@ -80,11 +86,10 @@ class Command(BaseCommand):
                 description = "generic_name"
                 description = product[description] if description in product else None
 
-                url = "url"
-                url = product[url] if url in product else None
+                
+
+                
 
                 database.insert_product(product_name, description, brand, store, url, nutrigrade, category_reference)
 
-                # Just to monitore
-                print(url)
 

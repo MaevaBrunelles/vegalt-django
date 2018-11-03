@@ -17,8 +17,6 @@ class DbInteract():
 
         return category_registered
 
-        
-        #return category_registered if category_registered else category
     
     # def get_category_id(self, name):
     #     """ Return the category_id for product registration """
@@ -48,16 +46,16 @@ class DbInteract():
             store_registered = Store.objects.create(name=name)
         else:
             store_registered = store.first()
-        
+
         return store_registered
 
-    def insert_nutrigrade(self, nutrigrade):
+    def insert_nutrigrade(self, score):
         """ Registration of nutrigrades in a SQL table """
 
-        nutrigrade = NutriGrade.objects.filter(nutrigrade=nutrigrade)
+        nutrigrade = NutriGrade.objects.filter(nutrigrade=score)
 
         if not nutrigrade.exists():
-            nutrigrade_registered = NutriGrade.objects.create(nutrigrade=nutrigrade)
+            nutrigrade_registered = NutriGrade.objects.create(nutrigrade=score)
         else:
             nutrigrade_registered = nutrigrade.first()
 
