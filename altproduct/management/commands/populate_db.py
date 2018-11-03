@@ -55,41 +55,42 @@ class Command(BaseCommand):
             result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=" + category["name"] + "&sort_by=unique_scans_n&page_size=1000&axis_x=energy&axis_y=products_n&action=display&json=1")
             products_details = result.json()
 
-            # Get the category_id for product registration
-            #category_registered = database.get_category_id(category["name"])
-
             for product in products_details["products"]:
 
-                # Test for each product if a name (or other below) is present.
-                # If not, put on None (= NULL in the database)
-                store = "stores"
-                store = product[store] if store in product else None
-                store = database.insert_store(store)
-
-                brand = "brands"
-                brand = product[brand] if brand in product else None
-                brand = database.insert_brand(brand)
-                
-                url = "url"
-                url = product[url] if url in product else None
-
-                # Just to monitore
-                print(url)
-                
-                nutrigrade = "nutrition_grades"
-                score = product[nutrigrade] if nutrigrade in product else None
-                nutrigrade = database.insert_nutrigrade(score)
-
                 name = "product_name"
-                product_name = product[name] if name in product else None
-
+                nutrigrade = "nutrition_grades"
+                store = "stores"
+                brand = "brands"
+                url = "url"
                 description = "generic_name"
-                description = product[description] if description in product else None
 
-                
+                # Test for each product if a name (or other below) is present.
+                if product.get(name) and product.get(nutrigrade) and product.get(store) and product.get(brand) and product.get(url) and product.get(description):
+                    
+                    name = product[name]
+                    description = product[description]
+                    url = product[url]
+                    # Just to monitore
+                    print(url)
 
-                
+                    score = product[nutrigrade]
+                    nutrigrade = database.insert_nutrigrade(score)
 
-                database.insert_product(product_name, description, brand, store, url, nutrigrade, category_reference)
+                    store = product[store]
+                    store = database.insert_store(store)
 
+                    brand = product[brand]
+                    brand = database.insert_brand(brand)
 
+                    database.insert_product(
+                        name,
+                        description,
+                        brand,
+                        store,
+                        url,
+                        nutrigrade,
+                        category_reference
+                    )
+
+                else:
+                    continue # to the following product

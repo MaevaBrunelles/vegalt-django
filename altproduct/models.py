@@ -17,7 +17,7 @@ class Category(models.Model):
 class Brand(models.Model):
     """ Brand model. One brand per product. """
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
@@ -26,7 +26,7 @@ class Brand(models.Model):
 class Store(models.Model):
     """ Store model. One store per product. """
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
@@ -52,8 +52,8 @@ class NutriGrade(models.Model):
 class Product(models.Model):
     """ Product model. This is the main model : it has link with all other models. """
 
-    name = models.CharField(max_length=50)
-    description = models.TextField(max_length=30)
+    name = models.CharField(max_length=200)
+    description = models.TextField(max_length=200)
     link = models.URLField()
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
     brand = models.ForeignKey(Brand, on_delete=models.DO_NOTHING)
