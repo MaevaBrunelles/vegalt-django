@@ -9,6 +9,7 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 
 from .forms import RegisterForm, SearchForm
+from .models import Product, Category
 
 
 def index(request):
@@ -107,36 +108,39 @@ def alternative(request):
         'search_form': SearchForm(),
     }
 
+    category = Category.objects.get(name__icontains=searched_product, alternative=False)
+    product = Product.objects.filter(category_id=category.id).order_by('?')[1]
+
     # tag_0 == category
-    result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + searched_product + "&tagtype_0=categories&tag_contains_0=contains&tag_0=" + searched_product + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
-    products_details = result.json()
+    #result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + searched_product + "&tagtype_0=categories&tag_contains_0=contains&tag_0=" + searched_product + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
+    #products_details = result.json()
 
-    if products_details['count'] == 0:
-        context['h2_tag'] = 'Votre recherche n\'a retourné aucun résultat'
-        context['message'] = 'Essayez une nouvelle recherche avec un autre produit.'
+    #if products_details['count'] == 0:
+    #    context['h2_tag'] = 'Votre recherche n\'a retourné aucun résultat'
+    #    context['message'] = 'Essayez une nouvelle recherche avec un autre produit.'
 
-    else:
-        product_img = products_details["products"][0]["image_front_url"]
-        context['searched_product_img'] = product_img
+    #else:
+        #product_img = products_details["products"][0]["image_front_url"]
+    context['searched_product_img'] = product.image
 
-        alt_category = searched_product + " vegetal"
-        result2 = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=" + alt_category + "&sort_by=unique_scans_n&page_size=1000&axis_x=energy&axis_y=products_n&action=display&json=1")
-        alt_products = result2.json()
+    #alt_category = searched_product + " vegetal"
+    #result2 = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=" + alt_category + "&sort_by=unique_scans_n&page_size=1000&axis_x=energy&axis_y=products_n&action=display&json=1")
+    #alt_products = result2.json()
 
-        if alt_products['count'] == 0:
-            context['h2_tag'] = 'Aucun produit alternatif n\'a été trouvé :('
-            context['message'] = 'Essayez une nouvelle recherche avec un autre produit.'
-        else:
-            random_alt_products = []
-            for _ in range(6):
-                alt_product = random.choice(alt_products['products'])
-                if 'product_name_fr' in alt_product and 'image_front_url' in alt_product:
-                    random_alt_products.append(alt_product)
-                else:
-                    continue
+    # if alt_products['count'] == 0:
+    #     context['h2_tag'] = 'Aucun produit alternatif n\'a été trouvé :('
+    #     context['message'] = 'Essayez une nouvelle recherche avec un autre produit.'
+    # else:
+    #     random_alt_products = []
+    #     for _ in range(6):
+    #         alt_product = random.choice(alt_products['products'])
+    #         if 'product_name_fr' in alt_product and 'image_front_url' in alt_product:
+    #             random_alt_products.append(alt_product)
+    #         else:
+    #             continue
 
-            context['h2_tag'] = 'Vous pouvez remplacer cet aliment par :'
-            context['alt_products'] = random_alt_products
+    context['h2_tag'] = 'Vous pouvez remplacer cet aliment par :'
+        #context['alt_products'] = random_alt_products
 
     return render(request, 'altproduct/alternative.html', context)
  
