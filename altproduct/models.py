@@ -55,6 +55,8 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(max_length=200)
     link = models.URLField()
+    image = models.URLField()
+    nutrition_image = models.URLField()
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
     brand = models.ForeignKey(Brand, on_delete=models.DO_NOTHING)
     store = models.ForeignKey(Store, on_delete=models.DO_NOTHING)
