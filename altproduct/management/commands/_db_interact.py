@@ -17,13 +17,6 @@ class DbInteract():
 
         return category_registered
 
-    
-    # def get_category_id(self, name):
-    #     """ Return the category_id for product registration """
-
-    #     category = Category.objects.get(name=name)
-
-    #     return category.id
 
     def insert_brand(self, name):
         """ Registration of brand in a SQL table """
