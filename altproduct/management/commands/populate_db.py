@@ -118,7 +118,7 @@ class Command(BaseCommand):
 
                     #if product.get(self.NAME) and product.get(self.NUTRIGRADE) and product.get(self.STORE) and product.get(self.BRAND) and product.get(self.URL) and product.get(self.DESCRIPTION) and product.get(self.IMAGE) and product.get(self.NUTRITION_IMAGE):
 
-                    attributes = [self.NAME, self.NUTRIGRADE, self.URL, self.IMAGE, self.NUTRITION_IMAGE]
+                    attributes = [self.NAME, self.NUTRIGRADE, self.URL, self.IMAGE, self.NUTRITION_IMAGE, self.DESCRIPTION, self.STORE, self.BRAND]
                     if not self._is_product_contains_all_attributes(product, attributes):
                         continue # to the following product
 
@@ -143,10 +143,10 @@ class Command(BaseCommand):
                             url,
                             image,
                             nutrition_image,
-                            brand,
                             category_reference,
-                            nutrigrade,
+                            brand,
                             store,
+                            nutrigrade,
                         )
 
         self.stdout.write(self.style.SUCCESS('Successfully populate database'))

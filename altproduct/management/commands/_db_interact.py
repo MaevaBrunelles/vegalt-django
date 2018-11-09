@@ -55,11 +55,11 @@ class DbInteract():
         return nutrigrade_registered
 
 
-    def insert_product(self, product_name, description, link, image, nutrition_image, category_id, brand, store, nutrigrade):
+    def insert_product(self, name, description, link, image, nutrition_image, category_id, brand, store, nutrigrade):
         """Insert the food product informations in the database"""
 
         Product.objects.create(
-            name=product_name,
+            name=name,
             description=description,
             link=link,
             image=image,
