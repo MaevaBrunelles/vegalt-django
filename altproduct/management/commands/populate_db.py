@@ -18,28 +18,23 @@ class Command(BaseCommand):
     NUTRITION_IMAGE = "image_nutrition_small_url"
     PRODUCTS_CATEGORIES = [
         {
-            "name": ["Steaks hachés", "Saucisses françaises", "Jambons de Paris", "Laits pasteurisés", "Yaourts brassés"],
+            "name": ["Steaks hachés", "Saucisses françaises", "Jambons de Paris", "Laits pasteurisés", "Yaourts brassés", "Crèmes fraîches légères", "Viandes"],
             "alternative": False,
         },
         {
-            "name": ["Steaks végétaux pour hamburgers", "Hamburgers végétariens", "Steak végétal", "Saucisses végétales", "Jambon végétal", "Laits végétaux", "Substitut du lait", "Yaourts végétaux"],
+            "name": ["Steaks végétaux pour hamburgers", "Hamburgers végétariens", "Steak végétal", "Saucisses végétales", "Jambon végétal", "Laits végétaux", "Substitut du lait", "Yaourts végétaux", "Crèmes végétales pour cuisiner", "Substituts de viande"],
             "alternative": True,
         }
     ]
 
-    def _is_product_contains_all_attributes(self, product, *attrs):
-        """ Return True if the product contains all necessary attributes """
+    def _does_product_contains_given_attributes(self, product, *attrs):
+        """ Return True if the product contains all given attributes """
 
-        is_attribute = False
+        for attribute in list(attrs[0]):
+            if not product.get(attribute):
+                return False
 
-        for attribut in list(attrs[0]):
-            if not product.get(attribut):
-                is_attribute = False
-                break
-            else:
-                is_attribute = True
-
-        return is_attribute
+        return True
 
     def handle(self, *args, **options):
         """
@@ -65,7 +60,7 @@ class Command(BaseCommand):
                 for product in products_details["products"]:
 
                     attributes = [self.NAME, self.NUTRIGRADE, self.URL, self.IMAGE, self.NUTRITION_IMAGE, self.DESCRIPTION, self.STORE, self.BRAND]
-                    if not self._is_product_contains_all_attributes(product, attributes):
+                    if not self._does_product_contains_given_attributes(product, attributes):
                         continue # to the following product
 
                     else:
