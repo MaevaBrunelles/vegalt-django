@@ -15,4 +15,6 @@ urlpatterns = [
     path('connexion/', CustomLoginView.as_view(), name='account_login'),
     path('deconnexion/', LogoutView.as_view(), name='logout'),
     path('mon-compte/', views.account, name='account'),
+    path('alternatives/', views.alternative, name='alternative'),
+    path('produit-alternatif/<str:product_id>/<str:product_name>/', views.product_detail, name='product_detail'),
 ]

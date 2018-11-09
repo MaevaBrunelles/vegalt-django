@@ -1,0 +1,27 @@
+{% extends 'altproduct/base.html' %}
+
+{% block content %}
+
+{% include 'altproduct/little-header.html' %}
+
+<section id="account">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+
+                <h2 class="section-heading">{{ h2_tag }}</h2>
+                <hr class="my-4">
+
+                <img class="product-detail-img" src="https://static.openfoodfacts.org/images/misc/nutriscore-{{ product.nutriscore }}.svg" alt="nutrition score {{ product.nutriscore }}" title="Nutri-score {{ product.nutriscore }}" />
+                <img class="product-detail-img" src="{{ product.nutrition_img }}" alt="nutrition 100g" title="Nutrition 100g" />
+
+                <br />
+
+                <a href="{{ product.url }}" class="btn btn-primary btn-xl mt-50" target="_blank">Voir la fiche Open Food Facts</a>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

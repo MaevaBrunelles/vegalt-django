@@ -1,17 +1,21 @@
-<header class="littlehead text-center text-white d-flex">
-    <div class="container my-auto">
-        <div class="row">
-            <div class="col-lg-10 mx-auto">
-                {% if user.is_authenticated %}
-                    <h1 class="text-uppercase">
-                        <strong>{{ h1_tag }} {{ user.username }} !</strong>
-                    </h1>
-                {% else %}
-                    <h1 class="text-uppercase">
-                        <strong>{{ h1_tag }}</strong>
-                    </h1>
-                {% endif %}
+{% if searched_product_img %}
+    <header class="littlehead text-center text-white d-flex" style="background-image:url( {{ searched_product_img }} ) !important;">
+{% else %}
+    <header class="littlehead text-center text-white d-flex">
+{% endif %}
+        <div class="container my-auto">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    {% if user.is_authenticated %}
+                        <h1 class="text-uppercase">
+                            <strong>{{ h1_tag }} {{ user.username }} !</strong>
+                        </h1>
+                    {% else %}
+                        <h1 class="text-uppercase">
+                            <strong>{{ h1_tag }}</strong>
+                        </h1>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
