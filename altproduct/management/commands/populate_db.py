@@ -16,58 +16,6 @@ class Command(BaseCommand):
     DESCRIPTION = "generic_name"
     IMAGE = "image_front_url"
     NUTRITION_IMAGE = "image_nutrition_small_url"
-
-    # PRODUCTS_CATEGORIES = [
-    #     {
-    #         "name": "Steaks hachés",
-    #         "alternative": False,
-    #     },
-    #     {
-    #         "name": "Steaks végétaux pour hamburgers",
-    #         "alternative": True,
-    #     },
-    #     {
-    #         "name": "Hamburgers végétariens",
-    #         "alternative": True,
-    #     },
-    #     {
-    #         "name": "Steak végétal",
-    #         "alternative": True,
-    #     },
-    #     {
-    #         "name": "Saucisses françaises",
-    #         "alternative": False,
-    #     },
-    #     {
-    #         "name": "Saucisses végétales",
-    #         "alternative": True,
-    #     },
-    #     {
-    #         "name": "Jambons de Paris",
-    #         "alternative": False,
-    #     },
-    #     {
-    #         "name": "Jambon végétal",
-    #         "alternative": True,
-    #     },
-    #     {
-    #         "name": "Laits pasteurisés",
-    #         "alternative": False,
-    #     },
-    #     {
-    #         "name": "Laits végétaux",
-    #         "alternative": True,
-    #     },
-    #     {
-    #         "name": "Yaourts brassés",
-    #         "alternative": False,
-    #     },
-    #     {
-    #         "name": "Yaourts végétaux",
-    #         "alternative": True,
-    #     },
-    # ]
-
     PRODUCTS_CATEGORIES = [
         {
             "name": ["Steaks hachés", "Saucisses françaises", "Jambons de Paris", "Laits pasteurisés", "Yaourts brassés"],
@@ -107,7 +55,7 @@ class Command(BaseCommand):
         for categories in self.PRODUCTS_CATEGORIES:
 
             for category in categories["name"]:
-            # Registration of each category in a SQL table
+                # Registration of each category in a SQL table
                 category_reference = database.insert_category(category, categories["alternative"])
 
                 # API call to get all food products for each category
@@ -115,8 +63,6 @@ class Command(BaseCommand):
                 products_details = result.json()
 
                 for product in products_details["products"]:
-
-                    #if product.get(self.NAME) and product.get(self.NUTRIGRADE) and product.get(self.STORE) and product.get(self.BRAND) and product.get(self.URL) and product.get(self.DESCRIPTION) and product.get(self.IMAGE) and product.get(self.NUTRITION_IMAGE):
 
                     attributes = [self.NAME, self.NUTRIGRADE, self.URL, self.IMAGE, self.NUTRITION_IMAGE, self.DESCRIPTION, self.STORE, self.BRAND]
                     if not self._is_product_contains_all_attributes(product, attributes):
