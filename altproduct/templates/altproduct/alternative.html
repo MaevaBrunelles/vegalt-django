@@ -18,17 +18,52 @@
                 
                 {% for product in alt_products %}
                     <div class="card product-card">
-                        <div class="product-card-img" style="background-image: url({{ product.image_front_url }})"></div>
+                        <div class="product-card-img" style="background-image: url({{ product.image }})"></div>
                         <div class="card-body">
-                            <h3 class="card-title product-card-title">{{ product.product_name_fr }}</h3>
-                            <a href="{% url 'altproduct:product_detail' product_id=product.id product_name=product.product_name_fr %}" class="btn btn-primary">Détail du produit</a>
+                            <h3 class="card-title product-card-title">{{ product.name }}</h3>
+                            <a href="{% url 'altproduct:product_detail' product_id=product.id product_name=product.name %}" class="btn btn-primary">Détail du produit</a>
                         </div>
                         <div class="card-footer">
                             <small>Favori</small>
                         </div>
-                        {% if forloop.counter|divisibleby:3 %}<div class="clearfix"></div>{% endif %}
                     </div>
                 {% endfor %}
+
+                <div class="clearfix"></div>
+
+                {% if paginate %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if alt_products.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?produit={{ request }}&page=1">Début</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?produit={{ request }}&page={{ alt_products.previous_page_number }}" aria-label="Précédent">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Précédent</span>                        
+                                </a>
+                            </li>
+                        {% endif %}
+                
+                        <li class="page-item page-link disabled">
+                        Page {{ alt_products.number }} sur {{ alt_products.paginator.num_pages }}.
+                        </li>
+                
+                        {% if alt_products.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?produit={{ request }}&page={{ alt_products.next_page_number }}" aria-label="Suivant">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Suivant</span>                    
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?produit={{ request }}&page={{ alt_products.paginator.num_pages }}">Fin</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                  </nav>
+                  {% endif %}
 
             </div>
         </div>
