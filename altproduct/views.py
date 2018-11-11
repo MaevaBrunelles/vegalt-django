@@ -144,10 +144,11 @@ def alternative(request):
     return render(request, 'altproduct/alternative.html', context)
 
 
-def product_detail(request, product_name):
+def product_detail(request, product_id, product_name):
     """ Product detail route. """
 
-    product = Product.objects.get(name=product_name)
+    # Get product by id, because many products can have the same name
+    product = Product.objects.get(id=product_id)
 
     context = {
         'h1_tag': product_name,
