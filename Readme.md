@@ -30,7 +30,6 @@ Vegalt-Django needs external librairies to work, including of course :
 
 * [Django](https://github.com/django/django) - The Web framework for perfectionists with deadlines
 
-
 You can easily install all of the required librairies with the following command :
 
 ```sh
@@ -55,5 +54,6 @@ You can currently search alternatives for thoses products :
 * Crème :fr:
 * Saucisse :fr:
 * Jambon :fr:
+* Viande :fr:
 
 To be complete...
