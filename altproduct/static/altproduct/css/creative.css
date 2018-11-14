@@ -330,6 +330,43 @@
     margin: 20px 40px;
   }
 
+  .product-card-badge{
+    position: absolute;
+    left: 250px;
+    top:-20px
+  }
+
+  .product-nutrigrade{
+    width: 50px; 
+    height: 50px;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1em;
+    padding-top: 20px;
+    color: white;
+    border-radius: 50%;
+  }
+
+  .badge-a{
+    background-color: #00823f;
+  }
+
+  .badge-b{
+    background-color: #85bd2b;
+  }
+
+  .badge-c{
+    background-color: #fecd01;
+  }
+
+  .badge-d{
+    background-color: #ee8201;
+  }
+
+  .badge-e{
+    background-color: #e73b07;
+  }
+
  footer{
    background-color: #DE9440;
    padding: 20px 0;

@@ -7,8 +7,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from .forms import RegisterForm, SearchForm
+from .models import Product, Category
 
 
 def index(request):
@@ -105,63 +107,55 @@ def alternative(request):
     context = {
         'h1_tag': searched_product,
         'search_form': SearchForm(),
+        'request': searched_product,
     }
 
-    # tag_0 == category
-    result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + searched_product + "&tagtype_0=categories&tag_contains_0=contains&tag_0=" + searched_product + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
-    products_details = result.json()
+    try:
+        category = Category.objects.get(name__icontains=searched_product, alternative=False)
+        product = Product.objects.filter(category_id=category.id).order_by('?')[1]
+        context['searched_product_img'] = product.image
+        context['h2_tag'] = 'Vous pouvez remplacer cet aliment par :'
 
-    if products_details['count'] == 0:
+        categories = Category.objects.filter(name__icontains=searched_product, alternative=True)
+
+        products = []
+        for category in categories:
+            products_per_category = Product.objects.filter(category_id=category.id).order_by('?')
+            for product in products_per_category:
+                if product not in products:
+                    products.append(product)
+
+        if not products:
+            context['h2_tag'] = 'Aucun produit alternatif n\'a été trouvé :('
+            context['message'] = 'Essayez une nouvelle recherche avec un autre produit.'
+
+        else:
+            paginator = Paginator(products, 9)
+            page = request.GET.get('page')
+            alt_products = paginator.get_page(page)
+
+            context['alt_products'] = alt_products
+            context['paginate'] = True
+
+    except Category.DoesNotExist:
         context['h2_tag'] = 'Votre recherche n\'a retourné aucun résultat'
         context['message'] = 'Essayez une nouvelle recherche avec un autre produit.'
 
-    else:
-        product_img = products_details["products"][0]["image_front_url"]
-        context['searched_product_img'] = product_img
-
-        alt_category = searched_product + " vegetal"
-        result2 = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=" + alt_category + "&sort_by=unique_scans_n&page_size=1000&axis_x=energy&axis_y=products_n&action=display&json=1")
-        alt_products = result2.json()
-
-        if alt_products['count'] == 0:
-            context['h2_tag'] = 'Aucun produit alternatif n\'a été trouvé :('
-            context['message'] = 'Essayez une nouvelle recherche avec un autre produit.'
-        else:
-            random_alt_products = []
-            for _ in range(6):
-                alt_product = random.choice(alt_products['products'])
-                if 'product_name_fr' in alt_product and 'image_front_url' in alt_product:
-                    random_alt_products.append(alt_product)
-                else:
-                    continue
-
-            context['h2_tag'] = 'Vous pouvez remplacer cet aliment par :'
-            context['alt_products'] = random_alt_products
-
     return render(request, 'altproduct/alternative.html', context)
- 
+
 
 def product_detail(request, product_id, product_name):
     """ Product detail route. """
-    
-    result = requests.get("https://fr.openfoodfacts.org/cgi/search.pl?action=process&search_terms=" + product_name + "&sort_by=unique_scans_n&page_size=20&axis_x=energy&axis_y=products_n&action=display&json=1")
-    products = result.json()
 
-    product_detail = {}
-    for product in products['products']:
-        if product['id'] == product_id:
-            #product_nutrigrade = product_details['']
-            product_detail['url'] = product['url']
-            product_detail['nutriscore'] = product['nutrition_grade_fr']
-            product_detail['nutrition_img'] = product['image_nutrition_small_url']
-            product_img = product['image_front_url']
+    # Get product by id, because many products can have the same name
+    product = Product.objects.get(id=product_id)
 
     context = {
         'h1_tag': product_name,
         'h2_tag': 'Informations nutritionnelles',
         'search_form': SearchForm(),
-        'product': product_detail,
-        'searched_product_img': product_img,
+        'product': product,
+        'searched_product_img': product.image,
     }
 
     return render(request, 'altproduct/product.html', context)
