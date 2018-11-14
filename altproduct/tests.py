@@ -119,7 +119,7 @@ class ProductTestCase(TestCase):
                 categories.append(category)
 
         for category in categories:
-            self.assertIn('alt', category.name)
+            self.assertIn('steak', category.name)
             self.assertEqual(True, category.alternative)
 
 
