@@ -18,4 +18,5 @@ urlpatterns = [
     path('alternatives/', views.alternative, name='alternative'),
     path('alternatives/save_product/', views.save_product, name='save_product'), # Ajax view
     path('produit-alternatif/<str:product_id>/<str:product_name>/', views.product_detail, name='product_detail'),
+    path('mes-produits/', views.fav_products, name='fav_products'),
 ]

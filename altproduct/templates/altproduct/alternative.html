@@ -28,8 +28,8 @@
                             <h3 class="card-title product-card-title">{{ product.name }}</h3>
                             <a href="{% url 'altproduct:product_detail' product_id=product.id product_name=product.name %}" class="btn btn-primary">Détail du produit</a>
                         </div>
-
-                        {% if user.is_authenticated %}
+                        {% url 'altproduct:alternatives' as alt_url %}
+                        {% if user.is_authenticated and request.get_full_path == alt_url %}
                             <div class="card-footer" id="fav-product-{{ product.id }}">
                                 
                                 <i id="fa-{{ product.id }}" class="far fa-check-square"></i>
@@ -56,7 +56,7 @@
                                                 $('#fav-product-{{ product.id }}-form').remove();
                                                 $('#fa-{{ product.id }}').remove();
 
-                                                $('#fav-product-{{ product.id }}').append('<i class="fas fa-check-square"></i>');
+                                                $('#fav-product-{{ product.id }}').append('<i class="fas fa-check-square fa-green"></i>');
                                                 $('#fav-product-{{ product.id }}').append('<span class="saved-product">Produit sauvegardé</span>');
                                                 console.log('success');
                                             },
@@ -81,10 +81,10 @@
                     <ul class="pagination justify-content-center">
                         {% if alt_products.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?produit={{ request }}&page=1">Début</a>
+                                <a class="page-link" href="?{% if request.get_full_path == alt_url %}produit={{ request }}&{% endif %}page=1">Début</a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?produit={{ request }}&page={{ alt_products.previous_page_number }}" aria-label="Précédent">
+                                <a class="page-link" href="?{% if request.get_full_path == alt_url %}produit={{ request }}&{% endif %}page={{ alt_products.previous_page_number }}" aria-label="Précédent">
                                     <span aria-hidden="true">&laquo;</span>
                                     <span class="sr-only">Précédent</span>                        
                                 </a>
@@ -97,13 +97,13 @@
                 
                         {% if alt_products.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?produit={{ request }}&page={{ alt_products.next_page_number }}" aria-label="Suivant">
+                                <a class="page-link" href="?{% if request.get_full_path == alt_url %}produit={{ request }}&{% endif %}page={{ alt_products.next_page_number }}" aria-label="Suivant">
                                     <span aria-hidden="true">&raquo;</span>
                                     <span class="sr-only">Suivant</span>                    
                                 </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?produit={{ request }}&page={{ alt_products.paginator.num_pages }}">Fin</a>
+                                <a class="page-link" href="?{% if request.get_full_path == alt_url %}produit={{ request }}&{% endif %}page={{ alt_products.paginator.num_pages }}">Fin</a>
                             </li>
                         {% endif %}
                     </ul>

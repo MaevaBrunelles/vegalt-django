@@ -7,6 +7,7 @@ import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse
@@ -164,6 +165,8 @@ def product_detail(request, product_id, product_name):
 
 
 def save_product(request):
+    """ Route to get save product Ajax script. Return confirmation or error message. """
+
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         product_id = request.POST.get('product_id')
@@ -175,3 +178,30 @@ def save_product(request):
             response = "Produit déjà enregistré pour votre user"
 
         return HttpResponse(response)
+
+
+def fav_products(request):
+    """ Favourite products page. Need an account to have access to it. """
+
+    user = request.user
+    fav_products = FavouriteProduct.objects.filter(user_id=user.id)
+
+    products = []
+    for fav_product in fav_products:
+        product = Product.objects.get(id=fav_product.product_id)
+        if product not in products:
+            products.append(product)
+
+    paginator = Paginator(products, 9)
+    page = request.GET.get('page')
+    alt_products = paginator.get_page(page)
+
+    context = {
+        'h1_tag': 'Les alternatives gardées au chaud',
+        'h2_tag': 'Très bon choix :)',
+        'search_form': SearchForm(),
+        'alt_products': alt_products,
+        'paginate': True,
+    }
+
+    return render(request, 'altproduct/alternative.html', context)
