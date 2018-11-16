@@ -367,6 +367,31 @@
     background-color: #e73b07;
   }
 
+  .fav-product-form{
+    display: inline;
+  }
+
+  .save-product{
+    background-color: #f7f7f7;
+    border: none;
+    
+  }
+
+  .save-product:hover{
+    text-decoration-line: underline;
+    cursor: pointer;
+  }
+
+  .saved-product{
+    padding: 1px 7px 2px 9px;
+    color: #00823f;
+    font-weight: bold;
+  }
+
+  .fas{
+    color: #00823f;
+  }
+
  footer{
    background-color: #DE9440;
    padding: 20px 0;

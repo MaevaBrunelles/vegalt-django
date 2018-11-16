@@ -28,9 +28,49 @@
                             <h3 class="card-title product-card-title">{{ product.name }}</h3>
                             <a href="{% url 'altproduct:product_detail' product_id=product.id product_name=product.name %}" class="btn btn-primary">Détail du produit</a>
                         </div>
-                        <div class="card-footer">
-                            <small>Favori</small>
-                        </div>
+
+                        {% if user.is_authenticated %}
+                            <div class="card-footer" id="fav-product-{{ product.id }}">
+                                
+                                <i id="fa-{{ product.id }}" class="far fa-check-square"></i>
+                                
+                                <form id="fav-product-{{ product.id }}-form" class="fav-product-form" method="POST" action="save_product/">
+                                    {% csrf_token %}
+                                    <input class="save-product" type="submit" value="Sauvegarder ce produit">
+                                </form>
+
+                                <script>
+                                    $('#fav-product-{{ product.id }}-form').on('submit', function(event){
+                                        event.preventDefault();
+
+                                        $.ajax({
+                                            url: "save_product/",
+                                            type: "POST",
+                                            data: { 
+                                                csrfmiddlewaretoken: "{{ csrf_token }}",
+                                                product_id: '{{ product.id }}',
+                                                user_id: '{{ user.id }}'
+                                            },
+
+                                            success: function(json){
+                                                $('#fav-product-{{ product.id }}-form').remove();
+                                                $('#fa-{{ product.id }}').remove();
+
+                                                $('#fav-product-{{ product.id }}').append('<i class="fas fa-check-square"></i>');
+                                                $('#fav-product-{{ product.id }}').append('<span class="saved-product">Produit sauvegardé</span>');
+                                                console.log('success');
+                                            },
+
+                                            error: function(xhr, errmsg, err){
+                                                $('.fav-product-error').append(response);
+                                                console.log();
+                                            }
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        {% endif %}
+
                     </div>
                 {% endfor %}
 
@@ -67,8 +107,8 @@
                             </li>
                         {% endif %}
                     </ul>
-                  </nav>
-                  {% endif %}
+                </nav>
+                {% endif %}
 
             </div>
         </div>

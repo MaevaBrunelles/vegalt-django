@@ -6,7 +6,8 @@
         <div class="container my-auto">
             <div class="row">
                 <div class="col-lg-10 mx-auto">
-                    {% if user.is_authenticated %}
+                    {% url 'altproduct:account' as account_url %}
+                    {% if request.get_full_path == account_url %}
                         <h1 class="text-uppercase">
                             <strong>{{ h1_tag }} {{ user.username }} !</strong>
                         </h1>

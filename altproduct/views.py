@@ -2,15 +2,17 @@
 
 import requests
 import random
+import json
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import HttpResponse
 
 from .forms import RegisterForm, SearchForm
-from .models import Product, Category
+from .models import Product, Category, FavouriteProduct
 
 
 def index(request):
@@ -159,3 +161,17 @@ def product_detail(request, product_id, product_name):
     }
 
     return render(request, 'altproduct/product.html', context)
+
+
+def save_product(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        product_id = request.POST.get('product_id')
+
+        try:
+            FavouriteProduct.objects.create(product_id=product_id, user_id=user_id)
+            response = "Produit enregistré nickel"
+        except:
+            response = "Produit déjà enregistré pour votre user"
+
+        return HttpResponse(response)
