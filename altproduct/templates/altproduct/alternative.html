@@ -43,30 +43,11 @@
                                 <script>
                                     $('#fav-product-{{ product.id }}-form').on('submit', function(event){
                                         event.preventDefault();
-
-                                        $.ajax({
-                                            url: "save_product/",
-                                            type: "POST",
-                                            data: { 
-                                                csrfmiddlewaretoken: "{{ csrf_token }}",
-                                                product_id: '{{ product.id }}',
-                                                user_id: '{{ user.id }}'
-                                            },
-
-                                            success: function(json){
-                                                $('#fav-product-{{ product.id }}-form').remove();
-                                                $('#fa-{{ product.id }}').remove();
-
-                                                $('#fav-product-{{ product.id }}').append('<i class="fas fa-check-square fa-green"></i>');
-                                                $('#fav-product-{{ product.id }}').append('<span class="saved-product">Produit sauvegardé</span>');
-                                                console.log('success');
-                                            },
-
-                                            error: function(xhr, errmsg, err){
-                                                $('.fav-product-error').append(response);
-                                                console.log();
-                                            }
-                                        });
+                                        // Jinja2 variables scope : need to pass them as function parameters to work
+                                        var csrf_token = '{{ csrf_token }}';
+                                        var product_id = '{{ product.id }}';
+                                        var user_id = '{{ user.id }}';
+                                        js_save_product(csrf_token, product_id, user_id);
                                     });
                                 </script>
                             </div>
