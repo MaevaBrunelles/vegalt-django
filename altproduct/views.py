@@ -167,17 +167,26 @@ def product_detail(request, product_id, product_name):
 def save_product(request):
     """ Route to get save product Ajax script. Return confirmation or error message. """
 
+    response_data = {}
+
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         product_id = request.POST.get('product_id')
 
-        try:
+        fav_product_for_current_user = FavouriteProduct.objects.filter(product_id=product_id, user_id=user_id)
+        if not fav_product_for_current_user.exists():
             FavouriteProduct.objects.create(product_id=product_id, user_id=user_id)
-            response = "Produit enregistré nickel"
-        except:
-            response = "Produit déjà enregistré pour votre user"
+            response_data['success_message'] = 'Produit sauvegardé'
+        else:
+            response_data['error_message'] = 'Produit déjà sauvegardé'
 
-        return HttpResponse(response)
+    else:
+        response_data['error_message'] = 'Impossible de sauvegarder le produit'
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type='application/json',
+    )
 
 
 def fav_products(request):

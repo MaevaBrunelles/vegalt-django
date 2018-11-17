@@ -392,8 +392,18 @@
     font-weight: bold;
   }
 
+  .not-saved-product{
+    padding: 2px 7px 3px 9px;
+    color: #e73b07;
+    font-weight: bold;
+  }
+
   .fa-green{
     color: #00823f;
+  }
+
+  .fa-red{
+    color: #e73b07;
   }
 
  footer{
