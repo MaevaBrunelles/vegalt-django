@@ -110,7 +110,7 @@ def alternative(request):
     context = {
         'h1_tag': searched_product,
         'search_form': SearchForm(),
-        'request': searched_product,
+        'searched_product': searched_product,
     }
 
     try:
