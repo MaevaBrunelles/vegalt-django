@@ -106,6 +106,7 @@ def alternative(request):
     """ Alternative route, when a product is searched """
 
     searched_product = request.GET.get('produit')
+    user = request.user
 
     context = {
         'h1_tag': searched_product,
@@ -116,16 +117,25 @@ def alternative(request):
     try:
         category = Category.objects.get(name__icontains=searched_product, alternative=False)
         product = Product.objects.filter(category_id=category.id).order_by('?')[1]
+
         context['searched_product_img'] = product.image
         context['h2_tag'] = 'Vous pouvez remplacer cet aliment par :'
 
         categories = Category.objects.filter(name__icontains=searched_product, alternative=True)
 
+        # Isolate products registered by the user
+        if user:
+            fav_products = FavouriteProduct.objects.filter(user_id=user.id)
+            fav_products_id = [fav_product.product_id for fav_product in fav_products]
+
         products = []
         for category in categories:
-            products_per_category = Product.objects.filter(category_id=category.id).order_by('?')
+            # Get all products by category, excluding products registered
+            products_per_category = Product.objects.filter(category_id=category.id).exclude(id__in=fav_products_id)
+
             for product in products_per_category:
-                if product not in products:
+                # Keep FR products
+                if product not in products and not 'Hamburguesa' in product.name and not 'Bebida' in product.name:
                     products.append(product)
 
         if not products:
