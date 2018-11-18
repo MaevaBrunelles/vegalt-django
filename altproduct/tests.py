@@ -4,52 +4,60 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-from .models import Product, Category, Brand, Store, NutriGrade
+from .models import Product, Category, Brand, Store, NutriGrade, FavouriteProduct
+
+
+def setUpModule():
+    fake_categories = ["Fake steak", "Fake milk", "Fake ham", "Fake sausage"]
+    for fake_category_name in fake_categories:
+        Category.objects.create(name=fake_category_name, alternative=False)
+
+    fake_alt_categories = ["Fake alt steak", "Fake alt steak 2", "Fake alt steak 3", "Fake alt milk", "Fake alt ham", "Fake alt sausage"]
+    for fake_alt_category_name in fake_alt_categories:
+        Category.objects.create(name=fake_alt_category_name, alternative=True)
+
+    for i in range(5):
+        store_name = "Fake store " + str(i)
+        Store.objects.create(name=store_name)
+
+    for i in range(5):
+        brand_name = "Fake brand " + str(i)
+        Brand.objects.create(name=brand_name)
+
+    nutrigrades = ['a', 'b', 'c', 'd', 'e']
+    for nutrigrade in nutrigrades:
+        NutriGrade.objects.create(nutrigrade=nutrigrade)
+
+    all_fake_categories = fake_categories + fake_alt_categories
+    for category in all_fake_categories:
+        for i in range(2):
+            product_name = category + " " + str(i)
+
+            fake_category = Category.objects.get(name=category)
+            nutrigrade = NutriGrade.objects.order_by('?').first()
+            fake_store = Store.objects.order_by('?').first()
+            fake_brand = Brand.objects.order_by('?').first()
+
+            Product.objects.create(
+                name=product_name,
+                category=fake_category,
+                store=fake_store,
+                brand=fake_brand,
+                nutrigrade=nutrigrade,
+            )
+    
+    fake_user = User.objects.create_user(
+            username='FakeUser',
+            email='test@mail.com',
+            password='fake_password'
+        )
+
+    fake_product = Product.objects.order_by('?').first()
+    FavouriteProduct.objects.create(user_id=fake_user.id, product_id=fake_product.id)
 
 
 class ProductTestCase(TestCase):
     """ Unit and integration tests for searched product feature """
-
-    def setUp(self):
-        """ Create all necessary elements to create fake products """
-
-        fake_categories = ["Fake steak", "Fake milk", "Fake ham", "Fake sausage"]
-        for fake_category_name in fake_categories:
-            Category.objects.create(name=fake_category_name, alternative=False)
-
-        fake_alt_categories = ["Fake alt steak", "Fake alt steak 2", "Fake alt steak 3", "Fake alt milk", "Fake alt ham", "Fake alt sausage"]
-        for fake_alt_category_name in fake_alt_categories:
-            Category.objects.create(name=fake_alt_category_name, alternative=True)
-
-        for i in range(5):
-            store_name = "Fake store " + str(i)
-            Store.objects.create(name=store_name)
-
-        for i in range(5):
-            brand_name = "Fake brand " + str(i)
-            Brand.objects.create(name=brand_name)
-
-        nutrigrades = ['a', 'b', 'c', 'd', 'e']
-        for nutrigrade in nutrigrades:
-            NutriGrade.objects.create(nutrigrade=nutrigrade)
-
-        all_fake_categories = fake_categories + fake_alt_categories
-        for category in all_fake_categories:
-            for i in range(2):
-                product_name = category + " " + str(i)
-
-                fake_category = Category.objects.get(name=category)
-                nutrigrade = NutriGrade.objects.order_by('?').first()
-                fake_store = Store.objects.order_by('?').first()
-                fake_brand = Brand.objects.order_by('?').first()
-
-                Product.objects.create(
-                    name=product_name,
-                    category=fake_category,
-                    store=fake_store,
-                    brand=fake_brand,
-                    nutrigrade=nutrigrade,
-                )
 
     def test_product_creation(self):
         """ Test product creation """
@@ -142,20 +150,11 @@ class AccountViewsTestCase(TestCase):
 class AccountTestCase(TestCase):
     """ Integration tests for account feature """
 
-    def setUp(self):
-        """ Create an user in test database """
-
-        self.fake_user = User.objects.create_user(
-            username='FakeUser',
-            email='test@mail.com',
-            password='fake_password'
-        )
-
     def test_create_user_in_db(self):
         """ Get the user in database to verify if it's created """
 
         user = User.objects.get(username='FakeUser')
-        self.assertEqual(user, self.fake_user)
+        self.assertEqual(user.username, 'FakeUser')
 
     def test_good_login_returns_true(self):
         """ Test login with good credentials """
@@ -178,3 +177,18 @@ class AccountTestCase(TestCase):
         self.client.login(username='FakeUser', password='fake_password')
         self.client.logout()
         self.assertRaises(KeyError, lambda: self.client.session['_auth_user_id'])
+
+
+def tearDownModule():
+    """
+    Delete all objects from test database.
+    Don't change the order to respect foreign keys constraint.
+    """
+
+    FavouriteProduct.objects.all().delete()
+    User.objects.all().delete()
+    Product.objects.all().delete()
+    Category.objects.all().delete()
+    Store.objects.all().delete()
+    Brand.objects.all().delete()
+    NutriGrade.objects.all().delete()
