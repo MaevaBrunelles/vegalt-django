@@ -1,5 +1,7 @@
 """ Unit tests + Integration tests """
 
+import json
+
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -8,6 +10,8 @@ from .models import Product, Category, Brand, Store, NutriGrade, FavouriteProduc
 
 
 def setUpModule():
+    """ Create all necessary objects for application tests in test database. """
+
     fake_categories = ["Fake steak", "Fake milk", "Fake ham", "Fake sausage"]
     for fake_category_name in fake_categories:
         Category.objects.create(name=fake_category_name, alternative=False)
@@ -45,12 +49,12 @@ def setUpModule():
                 brand=fake_brand,
                 nutrigrade=nutrigrade,
             )
-    
+
     fake_user = User.objects.create_user(
-            username='FakeUser',
-            email='test@mail.com',
-            password='fake_password'
-        )
+        username='FakeUser',
+        email='test@mail.com',
+        password='fake_password'
+    )
 
     fake_product = Product.objects.order_by('?').first()
     FavouriteProduct.objects.create(user_id=fake_user.id, product_id=fake_product.id)
@@ -177,6 +181,74 @@ class AccountTestCase(TestCase):
         self.client.login(username='FakeUser', password='fake_password')
         self.client.logout()
         self.assertRaises(KeyError, lambda: self.client.session['_auth_user_id'])
+
+
+class FavouriteProductTestCase(TestCase):
+    """ Unit and integration tests for save product feature """
+
+    def test_fav_products_page_returns_200(self):
+        """ Favourite products page returns 200 """
+
+        response = self.client.get(reverse('altproduct:fav_products'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_alternative_page_doesnt_return_favourite_product(self):
+        """
+        Verify that products returned in alternative products
+        page are not registered products.
+        """
+
+        fake_fav_product = FavouriteProduct.objects.order_by('?').first()
+
+        self.client.login(username='FakeUser', password='fake_password')
+        response = self.client.get(reverse('altproduct:alternative'), {'produit': 'steak'})
+
+        fake_alt_products = response.context['alt_products']
+
+        self.assertNotIn(fake_fav_product, fake_alt_products)
+
+    def fav_products_page_returns_alt_and_fav_products(self):
+        """
+        Verify that products returned in fav products page are alternative
+        products registered by the user.
+        """
+
+        fake_fav_product = FavouriteProduct.objects.order_by('?').first()
+
+        self.client.login(username='FakeUser', password='fake_password')
+        response = self.client.get(reverse('altproduct:fav_products'))
+
+        fake_fav_products = response.context['fav_products']
+        # See test_product_returned_is_alternative test for object_list use
+        category = Category.objects.get(id=fake_fav_products.object_list.category.id)
+
+        self.assertEqual(fake_fav_products.object_list.id, fake_fav_product.product_id)
+        self.assertEqual(True, category.alternative)
+
+    def test_saved_product_ajax_feature(self):
+        """
+        Verify that an user can save a product as favourite.
+        Call the Django route which get the Ajax post.
+        If product is saved, the result page must return a success message,
+        and a new instance is created in FavouriteProduct model with user and product ids.
+        """
+
+        fake_product = Product.objects.get(name='Fake alt milk 1')
+        user = User.objects.get(username='FakeUser')
+
+        data = {
+            'user_id': user.id,
+            'product_id': fake_product.id
+        }
+
+        self.client.login(username='FakeUser', password='fake_password')
+        response = self.client.post(reverse('altproduct:save_product'), data=data, HTTP_X_REQUESTED='XMLHttpRequest')
+
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json['success_message'], 'Produit sauvegardé')
+
+        fake_fav_product = FavouriteProduct.objects.get(user_id=user.id, product_id=fake_product.id)
+        self.assertTrue(fake_fav_product)
 
 
 def tearDownModule():
