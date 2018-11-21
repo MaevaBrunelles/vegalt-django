@@ -243,7 +243,7 @@ class FavouriteProductTestCase(TestCase):
             'product_id': fake_product.id
         }
 
-        self.client.login(username='FakeUser', password='fake_password')
+        self.client.login(username=user.username, password=user.password)
         response = self.client.post(reverse('altproduct:save_product'), data=data, HTTP_X_REQUESTED='XMLHttpRequest')
 
         response_json = json.loads(response.content)
