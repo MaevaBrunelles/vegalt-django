@@ -1,10 +1,12 @@
 """ Unit tests + Integration tests """
 
 import json
+from io import StringIO
 
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.core.management import call_command
 
 from .models import Product, Category, Brand, Store, NutriGrade, FavouriteProduct
 
@@ -249,6 +251,17 @@ class FavouriteProductTestCase(TestCase):
 
         fake_fav_product = FavouriteProduct.objects.get(user_id=user.id, product_id=fake_product.id)
         self.assertTrue(fake_fav_product)
+
+
+class CommandTestCase(TestCase):
+    """ Unit test for custom commands """
+
+    def test_populate_db_command(self):
+        """ Test if custom command populate_db is working well. """
+
+        out = StringIO()
+        call_command('populate_db', stdout=out)
+        self.assertIn('Successfully populate database', out.getvalue())
 
 
 def tearDownModule():
