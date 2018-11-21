@@ -4,7 +4,7 @@ import json
 from io import StringIO
 
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.models import User
 from django.core.management import call_command
 
@@ -152,6 +152,21 @@ class AccountViewsTestCase(TestCase):
         response = self.client.get('badurl')
         self.assertEqual(response.status_code, 404)
 
+    def test_register_view_creates_user(self):
+        """ """
+
+        data = {
+            'username': 'test',
+            'email': 'fake@mail.com',
+            'password': 'testfakepwd',
+        }
+        response = self.client.post(reverse('altproduct:register'), data=data, follow=True, HTTP_X_REQUESTED='XMLHttpRequest')
+        fake_user = User.objects.get(email='fake@mail.com')
+
+        self.assertTrue(fake_user)
+        self.assertRedirects(response, reverse('altproduct:account_login'), status_code=302, target_status_code=200)
+
+
 
 class AccountTestCase(TestCase):
     """ Integration tests for account feature """
@@ -253,15 +268,15 @@ class FavouriteProductTestCase(TestCase):
         self.assertTrue(fake_fav_product)
 
 
-class CommandTestCase(TestCase):
-    """ Unit test for custom commands """
+# class CommandTestCase(TestCase):
+#     """ Unit test for custom commands """
 
-    def test_populate_db_command(self):
-        """ Test if custom command populate_db is working well. """
+#     def test_populate_db_command(self):
+#         """ Test if custom command populate_db is working well. """
 
-        out = StringIO()
-        call_command('populate_db', stdout=out)
-        self.assertIn('Successfully populate database', out.getvalue())
+#         out = StringIO()
+#         call_command('populate_db', stdout=out)
+#         self.assertIn('Successfully populate database', out.getvalue())
 
 
 def tearDownModule():
