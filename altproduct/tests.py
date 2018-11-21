@@ -153,7 +153,7 @@ class AccountViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_register_view_creates_user(self):
-        """ """
+        """ Test register form, user creation in db and redirection to login page. """
 
         data = {
             'username': 'test',
@@ -161,11 +161,11 @@ class AccountViewsTestCase(TestCase):
             'password': 'testfakepwd',
         }
         response = self.client.post(reverse('altproduct:register'), data=data, follow=True, HTTP_X_REQUESTED='XMLHttpRequest')
+        
         fake_user = User.objects.get(email='fake@mail.com')
 
         self.assertTrue(fake_user)
         self.assertRedirects(response, reverse('altproduct:account_login'), status_code=302, target_status_code=200)
-
 
 
 class AccountTestCase(TestCase):
@@ -268,15 +268,15 @@ class FavouriteProductTestCase(TestCase):
         self.assertTrue(fake_fav_product)
 
 
-# class CommandTestCase(TestCase):
-#     """ Unit test for custom commands """
+class CommandTestCase(TestCase):
+    """ Unit test for custom commands """
 
-#     def test_populate_db_command(self):
-#         """ Test if custom command populate_db is working well. """
+    def test_populate_db_command(self):
+        """ Test if custom command populate_db is working well. """
 
-#         out = StringIO()
-#         call_command('populate_db', stdout=out)
-#         self.assertIn('Successfully populate database', out.getvalue())
+        out = StringIO()
+        call_command('populate_db', stdout=out)
+        self.assertIn('Successfully populate database', out.getvalue())
 
 
 def tearDownModule():
