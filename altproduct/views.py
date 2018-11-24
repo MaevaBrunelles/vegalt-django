@@ -202,25 +202,31 @@ def save_product(request):
 def fav_products(request):
     """ Favourite products page. Need an account to have access to it. """
 
+    context = {
+        'h1_tag': 'Les alternatives gardées au chaud',
+        'search_form': SearchForm(),
+    }
+
     user = request.user
     fav_products = FavouriteProduct.objects.filter(user_id=user.id)
 
-    products = []
-    for fav_product in fav_products:
-        product = Product.objects.get(id=fav_product.product_id)
-        if product not in products:
-            products.append(product)
+    if fav_products.exists():
+        products = []
+        for fav_product in fav_products:
+            product = Product.objects.get(id=fav_product.product_id)
+            if product not in products:
+                products.append(product)
 
-    paginator = Paginator(products, 9)
-    page = request.GET.get('page')
-    alt_products = paginator.get_page(page)
+        paginator = Paginator(products, 9)
+        page = request.GET.get('page')
+        alt_products = paginator.get_page(page)
 
-    context = {
-        'h1_tag': 'Les alternatives gardées au chaud',
-        'h2_tag': 'Très bon choix :)',
-        'search_form': SearchForm(),
-        'alt_products': alt_products,
-        'paginate': True,
-    }
+        context['h2_tag'] = 'Très bon choix :)'
+        context['alt_products'] = alt_products
+        context['paginate'] = True
+
+    else:
+        context['h2_tag'] = 'Pas de produit enregistré pour le moment'
+        context['message'] = 'Faites vite une recherche !'
 
     return render(request, 'altproduct/alternative.html', context)
