@@ -2,15 +2,18 @@
 
 import requests
 import random
+import json
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import HttpResponse
 
 from .forms import RegisterForm, SearchForm
-from .models import Product, Category
+from .models import Product, Category, FavouriteProduct
 
 
 def index(request):
@@ -103,26 +106,36 @@ def alternative(request):
     """ Alternative route, when a product is searched """
 
     searched_product = request.GET.get('produit')
+    user = request.user
 
     context = {
         'h1_tag': searched_product,
         'search_form': SearchForm(),
-        'request': searched_product,
+        'searched_product': searched_product,
     }
 
     try:
         category = Category.objects.get(name__icontains=searched_product, alternative=False)
         product = Product.objects.filter(category_id=category.id).order_by('?')[1]
+
         context['searched_product_img'] = product.image
         context['h2_tag'] = 'Vous pouvez remplacer cet aliment par :'
 
         categories = Category.objects.filter(name__icontains=searched_product, alternative=True)
 
+        # Isolate products registered by the user
+        if user:
+            fav_products = FavouriteProduct.objects.filter(user_id=user.id)
+            fav_products_id = [fav_product.product_id for fav_product in fav_products]
+
         products = []
         for category in categories:
-            products_per_category = Product.objects.filter(category_id=category.id).order_by('?')
+            # Get all products by category, excluding products registered
+            products_per_category = Product.objects.filter(category_id=category.id).exclude(id__in=fav_products_id)
+
             for product in products_per_category:
-                if product not in products:
+                # Keep FR products
+                if product not in products and not 'Hamburguesa' in product.name and not 'Bebida' in product.name:
                     products.append(product)
 
         if not products:
@@ -159,3 +172,61 @@ def product_detail(request, product_id, product_name):
     }
 
     return render(request, 'altproduct/product.html', context)
+
+
+def save_product(request):
+    """ Route to get save product Ajax script. Return confirmation or error message. """
+
+    response_data = {}
+
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        product_id = request.POST.get('product_id')
+
+        fav_product_for_current_user = FavouriteProduct.objects.filter(product_id=product_id, user_id=user_id)
+        if not fav_product_for_current_user.exists():
+            FavouriteProduct.objects.create(product_id=product_id, user_id=user_id)
+            response_data['success_message'] = 'Produit sauvegardé'
+        else:
+            response_data['error_message'] = 'Produit déjà sauvegardé'
+
+    else:
+        response_data['error_message'] = 'Impossible de sauvegarder le produit'
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type='application/json',
+    )
+
+
+def fav_products(request):
+    """ Favourite products page. Need an account to have access to it. """
+
+    context = {
+        'h1_tag': 'Les alternatives gardées au chaud',
+        'search_form': SearchForm(),
+    }
+
+    user = request.user
+    fav_products = FavouriteProduct.objects.filter(user_id=user.id)
+
+    if fav_products.exists():
+        products = []
+        for fav_product in fav_products:
+            product = Product.objects.get(id=fav_product.product_id)
+            if product not in products:
+                products.append(product)
+
+        paginator = Paginator(products, 9)
+        page = request.GET.get('page')
+        alt_products = paginator.get_page(page)
+
+        context['h2_tag'] = 'Très bon choix :)'
+        context['alt_products'] = alt_products
+        context['paginate'] = True
+
+    else:
+        context['h2_tag'] = 'Pas de produit enregistré pour le moment'
+        context['message'] = 'Faites vite une recherche !'
+
+    return render(request, 'altproduct/alternative.html', context)

@@ -27,6 +27,13 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'altproduct/css/creative.css' %}" rel="stylesheet">
 
+    <!-- Bootstrap core JavaScript -->
+    <script src="{% static 'altproduct/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'altproduct/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Ajax script for save product feature -->
+    <script src="{% static 'altproduct/js/ajax.js' %}"></script>
+
   </head>
 
   <body id="page-top">
@@ -51,7 +58,7 @@
                 <a class="nav-link js-scroll-trigger" href="{% url 'altproduct:account' %}"><i class="fas fa-user"></i></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link js-scroll-trigger" href=""><i class="fas fa-feather-alt"></i></a>
+                <a class="nav-link js-scroll-trigger" href="{% url 'altproduct:fav_products' %}"><i class="fas fa-feather-alt"></i></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link js-scroll-trigger" href="{% url 'altproduct:logout' %}"><i class="fas fa-sign-out-alt"></i></a>
@@ -83,10 +90,6 @@
         </div>
       </div>
     </footer>
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="{% static 'altproduct/vendor/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'altproduct/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
     <!-- Plugin JavaScript -->
     <script src="{% static 'altproduct/vendor/jquery-easing/jquery.easing.min.js' %}"></script>

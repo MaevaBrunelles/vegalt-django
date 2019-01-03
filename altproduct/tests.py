@@ -1,55 +1,69 @@
 """ Unit tests + Integration tests """
 
-from django.test import TestCase
-from django.urls import reverse
-from django.contrib.auth.models import User
+import json
+from io import StringIO
 
-from .models import Product, Category, Brand, Store, NutriGrade
+from django.test import TestCase
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth.models import User
+from django.core.management import call_command
+
+from .models import Product, Category, Brand, Store, NutriGrade, FavouriteProduct
+
+
+def setUpModule():
+    """ Create all necessary objects for application tests in test database. """
+
+    fake_categories = ["Fake steak", "Fake milk", "Fake ham", "Fake sausage"]
+    for fake_category_name in fake_categories:
+        Category.objects.create(name=fake_category_name, alternative=False)
+
+    fake_alt_categories = ["Fake alt steak", "Fake alt steak 2", "Fake alt steak 3", "Fake alt milk", "Fake alt ham", "Fake alt sausage"]
+    for fake_alt_category_name in fake_alt_categories:
+        Category.objects.create(name=fake_alt_category_name, alternative=True)
+
+    for i in range(5):
+        store_name = "Fake store " + str(i)
+        Store.objects.create(name=store_name)
+
+    for i in range(5):
+        brand_name = "Fake brand " + str(i)
+        Brand.objects.create(name=brand_name)
+
+    nutrigrades = ['a', 'b', 'c', 'd', 'e']
+    for nutrigrade in nutrigrades:
+        NutriGrade.objects.create(nutrigrade=nutrigrade)
+
+    all_fake_categories = fake_categories + fake_alt_categories
+    for category in all_fake_categories:
+        for i in range(2):
+            product_name = category + " " + str(i)
+
+            fake_category = Category.objects.get(name=category)
+            nutrigrade = NutriGrade.objects.order_by('?').first()
+            fake_store = Store.objects.order_by('?').first()
+            fake_brand = Brand.objects.order_by('?').first()
+
+            Product.objects.create(
+                name=product_name,
+                category=fake_category,
+                store=fake_store,
+                brand=fake_brand,
+                nutrigrade=nutrigrade,
+            )
+
+    fake_user = User.objects.create_user(
+        username='FakeUser',
+        email='test@mail.com',
+        password='fake_password'
+    )
+
+    fake_product = Product.objects.order_by('?').first()
+    FavouriteProduct.objects.create(user_id=fake_user.id, product_id=fake_product.id)
 
 
 class ProductTestCase(TestCase):
     """ Unit and integration tests for searched product feature """
-
-    def setUp(self):
-        """ Create all necessary elements to create fake products """
-
-        fake_categories = ["Fake steak", "Fake milk", "Fake ham", "Fake sausage"]
-        for fake_category_name in fake_categories:
-            Category.objects.create(name=fake_category_name, alternative=False)
-
-        fake_alt_categories = ["Fake alt steak", "Fake alt steak 2", "Fake alt steak 3", "Fake alt milk", "Fake alt ham", "Fake alt sausage"]
-        for fake_alt_category_name in fake_alt_categories:
-            Category.objects.create(name=fake_alt_category_name, alternative=True)
-
-        for i in range(5):
-            store_name = "Fake store " + str(i)
-            Store.objects.create(name=store_name)
-
-        for i in range(5):
-            brand_name = "Fake brand " + str(i)
-            Brand.objects.create(name=brand_name)
-
-        nutrigrades = ['a', 'b', 'c', 'd', 'e']
-        for nutrigrade in nutrigrades:
-            NutriGrade.objects.create(nutrigrade=nutrigrade)
-
-        all_fake_categories = fake_categories + fake_alt_categories
-        for category in all_fake_categories:
-            for i in range(2):
-                product_name = category + " " + str(i)
-
-                fake_category = Category.objects.get(name=category)
-                nutrigrade = NutriGrade.objects.order_by('?').first()
-                fake_store = Store.objects.order_by('?').first()
-                fake_brand = Brand.objects.order_by('?').first()
-
-                Product.objects.create(
-                    name=product_name,
-                    category=fake_category,
-                    store=fake_store,
-                    brand=fake_brand,
-                    nutrigrade=nutrigrade,
-                )
 
     def test_product_creation(self):
         """ Test product creation """
@@ -138,24 +152,30 @@ class AccountViewsTestCase(TestCase):
         response = self.client.get('badurl')
         self.assertEqual(response.status_code, 404)
 
+    def test_register_view_creates_user(self):
+        """ Test register form, user creation in db and redirection to login page. """
+
+        data = {
+            'username': 'test',
+            'email': 'fake@mail.com',
+            'password': 'testfakepwd',
+        }
+        response = self.client.post(reverse('altproduct:register'), data=data, follow=True, HTTP_X_REQUESTED='XMLHttpRequest')
+        
+        fake_user = User.objects.get(email='fake@mail.com')
+
+        self.assertTrue(fake_user)
+        self.assertRedirects(response, reverse('altproduct:account_login'), status_code=302, target_status_code=200)
+
 
 class AccountTestCase(TestCase):
     """ Integration tests for account feature """
-
-    def setUp(self):
-        """ Create an user in test database """
-
-        self.fake_user = User.objects.create_user(
-            username='FakeUser',
-            email='test@mail.com',
-            password='fake_password'
-        )
 
     def test_create_user_in_db(self):
         """ Get the user in database to verify if it's created """
 
         user = User.objects.get(username='FakeUser')
-        self.assertEqual(user, self.fake_user)
+        self.assertEqual(user.username, 'FakeUser')
 
     def test_good_login_returns_true(self):
         """ Test login with good credentials """
@@ -178,3 +198,97 @@ class AccountTestCase(TestCase):
         self.client.login(username='FakeUser', password='fake_password')
         self.client.logout()
         self.assertRaises(KeyError, lambda: self.client.session['_auth_user_id'])
+
+
+class FavouriteProductTestCase(TestCase):
+    """ Unit and integration tests for save product feature """
+
+    def test_fav_products_page_returns_200(self):
+        """ Favourite products page returns 200 """
+
+        response = self.client.get(reverse('altproduct:fav_products'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_alternative_page_doesnt_return_favourite_product(self):
+        """
+        Verify that products returned in alternative products
+        page are not registered products.
+        """
+
+        fake_fav_product = FavouriteProduct.objects.order_by('?').first()
+
+        self.client.login(username='FakeUser', password='fake_password')
+        response = self.client.get(reverse('altproduct:alternative'), {'produit': 'steak'})
+
+        fake_alt_products = response.context['alt_products']
+
+        self.assertNotIn(fake_fav_product, fake_alt_products)
+
+    def fav_products_page_returns_alt_and_fav_products(self):
+        """
+        Verify that products returned in fav products page are alternative
+        products registered by the user.
+        """
+
+        fake_fav_product = FavouriteProduct.objects.order_by('?').first()
+
+        self.client.login(username='FakeUser', password='fake_password')
+        response = self.client.get(reverse('altproduct:fav_products'))
+
+        fake_fav_products = response.context['fav_products']
+        # See test_product_returned_is_alternative test for object_list use
+        category = Category.objects.get(id=fake_fav_products.object_list.category.id)
+
+        self.assertEqual(fake_fav_products.object_list.id, fake_fav_product.product_id)
+        self.assertEqual(True, category.alternative)
+
+    def test_saved_product_ajax_feature(self):
+        """
+        Verify that an user can save a product as favourite.
+        Call the Django route which get the Ajax post.
+        If product is saved, the result page must return a success message,
+        and a new instance is created in FavouriteProduct model with user and product ids.
+        """
+
+        fake_product = Product.objects.get(name='Fake alt milk 1')
+        user = User.objects.get(username='FakeUser')
+
+        data = {
+            'user_id': user.id,
+            'product_id': fake_product.id
+        }
+
+        self.client.login(username=user.username, password=user.password)
+        response = self.client.post(reverse('altproduct:save_product'), data=data, HTTP_X_REQUESTED='XMLHttpRequest')
+
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json['success_message'], 'Produit sauvegardé')
+
+        fake_fav_product = FavouriteProduct.objects.get(user_id=user.id, product_id=fake_product.id)
+        self.assertTrue(fake_fav_product)
+
+
+class CommandTestCase(TestCase):
+    """ Unit test for custom commands """
+
+    def test_populate_db_command(self):
+        """ Test if custom command populate_db is working well. """
+
+        out = StringIO()
+        call_command('populate_db', stdout=out)
+        self.assertIn('Successfully populate database', out.getvalue())
+
+
+def tearDownModule():
+    """
+    Delete all objects from test database.
+    Don't change the order to respect foreign keys constraint.
+    """
+
+    FavouriteProduct.objects.all().delete()
+    User.objects.all().delete()
+    Product.objects.all().delete()
+    Category.objects.all().delete()
+    Store.objects.all().delete()
+    Brand.objects.all().delete()
+    NutriGrade.objects.all().delete()

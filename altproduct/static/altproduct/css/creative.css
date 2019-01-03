@@ -367,6 +367,45 @@
     background-color: #e73b07;
   }
 
+  .fav-product-form{
+    display: inline;
+  }
+
+  .save-product{
+    background-color: #f7f7f7;
+    border: none;
+    
+  }
+
+  .card-footer{
+    height: 52px;
+  }
+
+  .save-product:hover{
+    text-decoration-line: underline;
+    cursor: pointer;
+  }
+
+  .saved-product{
+    padding: 2px 7px 3px 9px;
+    color: #00823f;
+    font-weight: bold;
+  }
+
+  .not-saved-product{
+    padding: 2px 7px 3px 9px;
+    color: #e73b07;
+    font-weight: bold;
+  }
+
+  .fa-green{
+    color: #00823f;
+  }
+
+  .fa-red{
+    color: #e73b07;
+  }
+
  footer{
    background-color: #DE9440;
    padding: 20px 0;
