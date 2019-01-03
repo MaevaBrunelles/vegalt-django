@@ -1,4 +1,7 @@
 .vscode
 *.pyc
 .coverage
-htmlcov
+htmlcov/
+vegalt/settings/production.py
+__pycache__
+vegalt/staticfiles/
