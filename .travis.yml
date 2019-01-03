@@ -1,0 +1,20 @@
+language: python
+
+python:
+  - "3.6"
+
+before_script:
+  - pip3 install -r requirements.txt
+
+env:
+  - DJANGO_SETTINGS_MODULE="vegalt.settings.travis"
+
+services:
+  - postgresql
+
+script:
+  - ./manage.py test
+
+branches:
+  only:
+    - P10-production-configuration
