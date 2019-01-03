@@ -2,6 +2,8 @@ Find a vegetal alternative to animal food products. Based on [Open Food Facts](h
 
 # Vegalt-Django
 
+[![Build Status](https://travis-ci.com/MaevaBrunelles/vegalt-django.svg?branch=master)](https://travis-ci.com/MaevaBrunelles/vegalt-django)
+
 This project is the follower of https://github.com/MaevaBrunelles/vegalt (OC-P5). So, what's new ?
 
 * Based on Django
