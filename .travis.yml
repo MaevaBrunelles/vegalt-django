@@ -17,4 +17,4 @@ script:
 
 branches:
   only:
-    - P10-production-configuration
+    - P11-add-contact-+-mail-features-+-test-fix
