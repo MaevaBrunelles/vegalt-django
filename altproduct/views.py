@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse
-from django.core.mail import send_mail, BadHeaderError, EmailMessage, send_mass_mail
+from django.core.mail import BadHeaderError, EmailMessage, send_mass_mail
 
 from python_http_client.exceptions import BadRequestsError
 
@@ -23,7 +23,6 @@ def index(request):
     """ Home route. """
 
     context = {
-        'h1_tag': 'Du gras oui, mais de qualité !',
         'search_form': SearchForm(),
     }
 
@@ -58,7 +57,8 @@ def index(request):
 
                 send_mass_mail((mail_to_site, mail_to_sender), fail_silently=False)
 
-                context['success'] = "Message envoyé"
+                return redirect('altproduct:thanks')
+
             except BadHeaderError:
                 return HttpResponse('Invalid header found')
             except BadRequestsError as e:
@@ -68,9 +68,21 @@ def index(request):
     else:
         contact_form = ContactForm()
 
+    context['h1_tag'] = 'Du gras oui, mais de qualité !',
     context['contact_form'] = contact_form
 
     return render(request, 'altproduct/index.html', context)
+
+
+def thanks(request):
+    """ Thanks route after contact form submission. """
+
+    context = {
+        'search_form': SearchForm(),
+        'h1_tag': 'Reçu 5/5 !',
+    }
+
+    return render(request, 'altproduct/thanks.html', context)
 
 
 def legal(request):
