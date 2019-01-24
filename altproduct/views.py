@@ -11,8 +11,11 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse
+from django.core.mail import send_mail, BadHeaderError, EmailMessage, send_mass_mail
 
-from .forms import RegisterForm, SearchForm
+from python_http_client.exceptions import BadRequestsError
+
+from .forms import RegisterForm, SearchForm, ContactForm
 from .models import Product, Category, FavouriteProduct
 
 
@@ -23,6 +26,50 @@ def index(request):
         'h1_tag': 'Du gras oui, mais de qualité !',
         'search_form': SearchForm(),
     }
+
+    if request.method == 'POST':
+        contact_form = ContactForm(request.POST)
+
+        if contact_form.is_valid():
+            name = contact_form.cleaned_data['name']
+            sender_mail = contact_form.cleaned_data['sender_mail']
+            message = contact_form.cleaned_data['message']
+
+            message_to_site = "Bonjour Vegalt,\n\nVoici un nouveau message de " + sender_mail + " :\n\n" + message + "\n\nBonne journée."
+            subject_to_site = "Vegalt - Nouvelle demande de contact"
+
+            message_to_sender = "Bonjour " + name + ",\n\n" + "L'équipe de Vegalt a bien reçu votre message. Nous vous répondons rapidement.\n\nBonne journée,\nVegalt"
+            subject_to_sender = "Vegalt - Confirmation de contact"
+
+            try:
+                mail_to_site = (
+                    subject_to_site,
+                    message_to_site,
+                    'vegalt@ovh.fr',
+                    ['vegalt@ovh.fr']
+                )
+
+                mail_to_sender = (
+                    subject_to_sender,
+                    message_to_sender,
+                    'vegalt@ovh.fr', # from=
+                    ['vegalt@ovh.fr'] # to=
+                )
+
+                send_mass_mail((mail_to_site, mail_to_sender), fail_silently=False)
+
+                context['success'] = "Message envoyé"
+            except BadHeaderError:
+                return HttpResponse('Invalid header found')
+            except BadRequestsError as e:
+                return None
+
+
+    else:
+        contact_form = ContactForm()
+
+    context['contact_form'] = contact_form
+
     return render(request, 'altproduct/index.html', context)
 
 

@@ -61,6 +61,8 @@
             <h2 class="section-heading">Contactez-nous !</h2>
             <hr class="my-4">
             <p class="mb-5">Un produit que vous ne trouvez pas ? Une erreur sur le site constatée ? Une envie de nous dire merci ? N'hésitez pas à nous contacter :)</p>
+          
+            <p class="mb-5">Par téléphone ou mail :</p>
           </div>
         </div>
         <div class="row">
@@ -70,9 +72,36 @@
           </div>
           <div class="col-lg-4 mr-auto text-center">
             <i class="fas fa-envelope fa-3x mb-3 sr-contact-2"></i>
-            <p>
+            <p class="mb-5">
               <a href="mailto:your-email@your-domain.com">contact@purbeurre.com</a>
             </p>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-8 mx-auto">
+                
+                <p class="mb-5 text-center">Ou via le formulaire de contact :</p>
+                
+                <form id="contact-search" action="" method="POST">
+                  {% csrf_token %}
+
+                  <div class="fieldWrapper">
+                      {{ contact_form.name }}
+                  </div>                   
+                  <div class="fieldWrapper">
+                      {{ contact_form.sender_mail }}
+                  </div>      
+                  <div class="fieldWrapper" class="form-group">
+                      {{ contact_form.message }}
+                  </div>      
+  
+                  <input type="submit" class="btn btn-primary btn-search btn-contact" value="Envoyer">
+                </form>
+                {% if success %}
+                  <p>{{ success }}</p>
+                {% endif %}
+              </div>
+            </div>
           </div>
         </div>
       </div>

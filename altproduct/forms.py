@@ -1,7 +1,7 @@
 """ Forms file """
 
 from django.forms import (
-    ModelForm, EmailInput, PasswordInput, ValidationError, Form, CharField, TextInput
+    ModelForm, EmailInput, PasswordInput, ValidationError, Form, CharField, TextInput, Textarea, BooleanField, EmailField
 )
 from django.contrib.auth.models import User
 
@@ -46,3 +46,26 @@ class SearchForm(Form):
 
         field_name = "produit"
         return super(SearchForm, self).add_prefix(field_name)
+
+
+class ContactForm(Form):
+    """ Form to contact site owners. Display on index page. """
+
+    name = CharField(
+        widget=TextInput(attrs={
+            'placeholder': 'Nom',
+            'class': 'contact-name',
+        }))
+
+    sender_mail = EmailField(
+        widget=TextInput(attrs={
+            'placeholder': 'Email',
+            'class': 'contact-mail',
+        }))
+
+    message = CharField(
+        widget=Textarea(attrs={
+            'placeholder': 'Message',
+            'rows': 5,
+            'class': 'form-control',
+        }))
