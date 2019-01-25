@@ -1,17 +1,14 @@
 """ Views file """
 
-import requests
-import random
 import json
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.paginator import Paginator
 from django.http import HttpResponse
-from django.core.mail import BadHeaderError, EmailMessage, send_mass_mail
+from django.core.mail import BadHeaderError, send_mass_mail
 
 from python_http_client.exceptions import BadRequestsError
 

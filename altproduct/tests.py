@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.models import User
 from django.core.management import call_command
+from django.core import mail
 
 from .models import Product, Category, Brand, Store, NutriGrade, FavouriteProduct
 
@@ -277,6 +278,37 @@ class CommandTestCase(TestCase):
         out = StringIO()
         call_command('populate_db', stdout=out)
         self.assertIn('Successfully populate database', out.getvalue())
+
+
+class SendEmailTestCase(TestCase):
+    """ Unit and functionnal tests for email feature with contact form. """
+
+    def test_send_mass_mail(self):
+        """ Test send_mass_mail() function  """
+
+        mail_1 = ('Subject 1', 'Message 1', 'from@fake.com', ['to_1@fake.com'])
+        mail_2 = ('Subject 2', 'Message 2', 'from@fake.com', ['to_2@fake.com'])
+
+        mail.send_mass_mail((mail_1, mail_2), fail_silently=False)
+
+        # Test if the dummy mailbox received 2 mails
+        self.assertEqual(len(mail.outbox), 2)
+        # Test if the dummy mailbox received the good fake mail 1
+        self.assertEqual(mail.outbox[0].subject, 'Subject 1')
+
+    def test_thanks_view_after_contact_submission(self):
+        """ Test contact form and redirection to thanks page. """
+
+        contact = {
+            'name': 'Fake Name',
+            'sender_mail': 'fake@mail.com',
+            'message': 'Fake message',
+        }
+        response = self.client.post(reverse('altproduct:index'), data=contact, follow=True, HTTP_X_REQUESTED='XMLHttpRequest')
+
+        self.assertRedirects(response, reverse('altproduct:thanks'), status_code=302, target_status_code=200)
+
+
 
 
 def tearDownModule():
