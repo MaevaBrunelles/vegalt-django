@@ -5,10 +5,11 @@ import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.core.paginator import Paginator
 from django.http import HttpResponse
-from django.core.mail import BadHeaderError, send_mass_mail
+from django.core.mail import BadHeaderError, send_mass_mail, send_mail
+from django.template.loader import render_to_string
 
 from python_http_client.exceptions import BadRequestsError
 
@@ -116,6 +117,46 @@ def register(request):
             user = User.objects.filter(email=email)
             if not user.exists():
                 user = User.objects.create_user(username, email=email, password=password)
+                # User needs to activate his account
+                user.is_active = False
+                user.save()
+
+                # Create an account activation mail
+                subject = "Activez votre compte"
+                content = "Veuillez confirmer votre mail et activer votre compte en cliquant sur le lien suivant :"
+                signature = "A bientôt sur Vegalt !"
+
+                # Get domain name for activation link
+                host = request.get_host()
+
+                # Create the message
+                plain_message = render_to_string('mail.html', {
+                    'username': username,
+                    'content': content,
+                    'host': host,
+                    'account_id': user.id,
+                    'signature': signature
+                })
+
+                html_message = render_to_string('mail.html', {
+                    'username': username,
+                    'content': content,
+                    'host': host,
+                    'account_id': user.id,
+                    'signature': signature
+                })
+
+                # Set mails settings
+                from_mail = 'vegalt@ovh.fr'
+                to_mail = email
+
+                send_mail(
+                    subject,
+                    plain_message,
+                    from_mail,
+                    [to_mail],
+                    html_message=html_message
+                )
 
                 return redirect('altproduct:account_login')
 
@@ -129,6 +170,21 @@ def register(request):
     context['register_form'] = register_form
 
     return render(request, 'altproduct/account.html', context)
+
+
+def account_activation(request, account_id):
+    """ Account activation route. Set the is_active field from User model to True. """
+
+    user = User.objects.get(pk=account_id)
+    user.is_active = True
+    user.save()
+
+    context = {
+        'h1_tag': 'Activation de votre compte',
+        'username': user.username,
+    }
+
+    return render(request, 'altproduct/activation.html', context)
 
 
 class CustomLoginView(LoginView):

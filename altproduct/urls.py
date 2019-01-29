@@ -20,4 +20,5 @@ urlpatterns = [
     path('produit-alternatif/<str:product_id>/<str:product_name>/', views.product_detail, name='product_detail'),
     path('mes-produits/', views.fav_products, name='fav_products'),
     path('contact/', views.thanks, name='thanks'),
+    path('activation/<int:account_id>/', views.account_activation, name='activation'),
 ]
