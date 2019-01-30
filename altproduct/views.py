@@ -10,6 +10,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.core.mail import BadHeaderError, send_mass_mail, send_mail
 from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from python_http_client.exceptions import BadRequestsError
 
@@ -122,29 +123,24 @@ def register(request):
                 user.save()
 
                 # Create an account activation mail
-                subject = "Activez votre compte"
+                subject = "Vegalt : Activez votre compte client"
                 content = "Veuillez confirmer votre mail et activer votre compte en cliquant sur le lien suivant :"
                 signature = "A bientôt sur Vegalt !"
 
                 # Get domain name for activation link
+                protocol = "http://"
                 host = request.get_host()
 
                 # Create the message
-                plain_message = render_to_string('mail.html', {
-                    'username': username,
-                    'content': content,
-                    'host': host,
-                    'account_id': user.id,
-                    'signature': signature
-                })
-
                 html_message = render_to_string('mail.html', {
                     'username': username,
                     'content': content,
+                    'protocol': protocol,
                     'host': host,
                     'account_id': user.id,
                     'signature': signature
                 })
+                plain_message = strip_tags(html_message)
 
                 # Set mails settings
                 from_mail = 'vegalt@ovh.fr'
