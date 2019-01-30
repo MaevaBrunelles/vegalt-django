@@ -123,12 +123,12 @@ def register(request):
                 user.save()
 
                 # Create an account activation mail
-                subject = "Vegalt : Activez votre compte client"
+                subject = "Vegalt : Activez votre compte fraîchement créé !"
                 content = "Veuillez confirmer votre mail et activer votre compte en cliquant sur le lien suivant :"
                 signature = "A bientôt sur Vegalt !"
 
                 # Get domain name for activation link
-                protocol = "http://"
+                protocol = "http://" # To be changed on prod by https ?
                 host = request.get_host()
 
                 # Create the message
