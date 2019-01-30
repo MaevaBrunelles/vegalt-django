@@ -13,6 +13,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
+from vegalt import settings
 from .forms import RegisterForm, SearchForm, ContactForm
 from .models import Product, Category, FavouriteProduct
 
@@ -58,19 +59,19 @@ def index(request):
             try:
                 # Send contact to site owner
                 send_mail(
-                    subject_to_site,
-                    plain_message_to_site,
-                    from_mail,
-                    [to_site_mail],
+                    subject=subject_to_site,
+                    message=plain_message_to_site,
+                    from_email=from_mail,
+                    recipient_list=[to_site_mail],
                     fail_silently=False
                 )
 
                 # Send confirmation email to sender
                 send_mail(
-                    subject_to_sender,
-                    plain_message_to_sender,
-                    from_mail,
-                    [to_sender_mail],
+                    subject=subject_to_sender,
+                    message=plain_message_to_sender,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[to_sender_mail],
                     fail_silently=False,
                     html_message=html_message_to_sender
                 )
@@ -170,14 +171,13 @@ def register(request):
                 plain_message = strip_tags(html_message)
 
                 # Set mails settings
-                from_mail = 'vegalt@ovh.fr'
                 to_mail = email
 
                 send_mail(
-                    subject,
-                    plain_message,
-                    from_mail,
-                    [to_mail],
+                    subject=subject,
+                    message=plain_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[to_mail],
                     html_message=html_message
                 )
 

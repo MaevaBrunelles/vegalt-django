@@ -155,6 +155,4 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-#DEFAULT_FROM_EMAIL = 'Dont Reply <vegalt@ovh.fr>'
-#DEFAULT_FROM_EMAIL = 'contact@vegalt.fr'
-#SERVER_EMAIL = 'vegalt@ovh.fr'
+DEFAULT_FROM_EMAIL = 'Maëva de Vegalt <vegalt@ovh.fr>'
