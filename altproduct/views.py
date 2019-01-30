@@ -78,8 +78,7 @@ def index(request):
                 return redirect('altproduct:thanks')
 
             except SMTPException:
-                return HttpResponse('An error has been occured during mails sending :')
-
+                return redirect('altproduct:error')
 
     else:
         contact_form = ContactForm()
@@ -99,6 +98,17 @@ def thanks(request):
     }
 
     return render(request, 'altproduct/thanks.html', context)
+
+
+def error(request):
+    """ Error page if a SMTP error is raised after mail sending. """
+
+    context = {
+        'search_form': SearchForm(),
+        'h1_tag': 'On a un problème Houston',
+    }
+
+    return render(request, 'altproduct/error.html', context)
 
 
 def legal(request):
