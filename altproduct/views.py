@@ -1,25 +1,27 @@
 """ Views file """
 
 import json
+from smtplib import SMTPException
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.http import HttpResponse
-from django.core.mail import BadHeaderError, send_mass_mail, send_mail
+from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-
-from python_http_client.exceptions import BadRequestsError
 
 from .forms import RegisterForm, SearchForm, ContactForm
 from .models import Product, Category, FavouriteProduct
 
 
 def index(request):
-    """ Home route. """
+    """
+    Home route with contact form management. 
+    Send plain message for site owner and html message for client.
+    """
 
     context = {
         'search_form': SearchForm(),
@@ -33,35 +35,50 @@ def index(request):
             sender_mail = contact_form.cleaned_data['sender_mail']
             message = contact_form.cleaned_data['message']
 
-            message_to_site = "Bonjour Vegalt,\n\nVoici un nouveau message de " + sender_mail + " :\n\n" + message + "\n\nBonne journée."
-            subject_to_site = "Vegalt - Nouvelle demande de contact"
+            # Create email content for site owner
+            subject_to_site = "Vegalt : Nouvelle demande de contact"
+            plain_message_to_site = "Bonjour Vegalt,\n\nVoici un nouveau message de " + sender_mail + " :\n\n" + message + "\n\nRépondez-lui rapidement !"
 
-            message_to_sender = "Bonjour " + name + ",\n\n" + "L'équipe de Vegalt a bien reçu votre message. Nous vous répondons rapidement.\n\nBonne journée,\nVegalt"
-            subject_to_sender = "Vegalt - Confirmation de contact"
+            # Create confirmation email for sender
+            subject_to_sender = "Vegalt : Message reçu 5/5 !"
+            content_to_sender = "L'équipe de Vegalt a bien reçu votre message. On pédale fort pour vous répondre le plus rapidement possible !"
+            signature_to_sender = "A bientôt sur Vegalt !"
+
+            # Create the html message
+            html_message_to_sender = render_to_string('mail.html', {
+                'content': content_to_sender,
+                'signature': signature_to_sender,
+            })
+            plain_message_to_sender = strip_tags(html_message_to_sender)
+
+            # Set mails settings
+            from_mail = to_site_mail = 'vegalt@ovh.fr'
+            to_sender_mail = sender_mail
 
             try:
-                mail_to_site = (
+                # Send contact to site owner
+                send_mail(
                     subject_to_site,
-                    message_to_site,
-                    'vegalt@ovh.fr',
-                    ['vegalt@ovh.fr']
+                    plain_message_to_site,
+                    from_mail,
+                    [to_site_mail],
+                    fail_silently=False
                 )
 
-                mail_to_sender = (
+                # Send confirmation email to sender
+                send_mail(
                     subject_to_sender,
-                    message_to_sender,
-                    'vegalt@ovh.fr', # from=
-                    ['vegalt@ovh.fr'] # to=
+                    plain_message_to_sender,
+                    from_mail,
+                    [to_sender_mail],
+                    fail_silently=False,
+                    html_message=html_message_to_sender
                 )
-
-                send_mass_mail((mail_to_site, mail_to_sender), fail_silently=False)
 
                 return redirect('altproduct:thanks')
 
-            except BadHeaderError:
-                return HttpResponse('Invalid header found')
-            except BadRequestsError as e:
-                return None
+            except SMTPException:
+                return HttpResponse('An error has been occured during mails sending :')
 
 
     else:
@@ -95,13 +112,13 @@ def legal(request):
 
 
 def register(request):
-    """ Account creation route. """
+    """ Account creation route. Send an email to activate the account."""
 
     context = {
         'h1_tag': 'Créer un compte',
         'h2_tag': 'Un nom, un mot de passe et c\'est parti !',
         'search_form': SearchForm(),
-        }
+    }
 
     # If the register form is posted
     if request.method == "POST":
