@@ -383,7 +383,7 @@ class SendEmailTestCase(TestCase):
                                     HTTP_X_REQUESTED='XMLHttpRequest'
                                     )
 
-        self.assertRedirects(response, reverse('altproduct:error'),
+        self.assertRedirects(response, reverse('altproduct:contact'),
                              status_code=302,
                              target_status_code=200
                             )
@@ -398,7 +398,5 @@ def tearDownModule():
     FavouriteProduct.objects.all().delete()
     User.objects.all().delete()
     Product.objects.all().delete()
-    Category.objects.all().delete()
-    Store.objects.all().delete()
     Brand.objects.all().delete()
     NutriGrade.objects.all().delete()
