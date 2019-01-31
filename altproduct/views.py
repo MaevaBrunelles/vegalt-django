@@ -71,7 +71,7 @@ def index(request):
                 send_mail(
                     subject=subject_to_sender,
                     message=plain_message_to_sender,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    from_email='maeva.brunelles@gmail.com',
                     recipient_list=[to_sender_mail],
                     fail_silently=False,
                     html_message=html_message_to_sender
@@ -80,7 +80,7 @@ def index(request):
                 return redirect('altproduct:thanks')
 
             except SMTPException:
-                return redirect('altproduct:error')
+                return redirect('altproduct:contact')
 
     else:
         contact_form = ContactForm()
