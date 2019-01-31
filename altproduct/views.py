@@ -85,7 +85,7 @@ def index(request):
     else:
         contact_form = ContactForm()
 
-    context['h1_tag'] = 'Du gras oui, mais de qualité !',
+    context['h1_tag'] = 'Du gras oui, mais de qualité !'
     context['contact_form'] = contact_form
 
     return render(request, 'altproduct/index.html', context)
