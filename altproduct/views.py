@@ -80,7 +80,7 @@ def index(request):
                 return redirect('altproduct:thanks')
 
             except SMTPException:
-                return redirect('altproduct:contact')
+                return redirect('altproduct:error')
 
     else:
         contact_form = ContactForm()
