@@ -200,7 +200,7 @@ def account_activation(request, account_id):
     """ Account activation route. Set the is_active field from User model to True. """
 
     user = User.objects.get(pk=account_id)
-    user.is_active = True
+    user.is_active = False
     user.save()
 
     context = {
