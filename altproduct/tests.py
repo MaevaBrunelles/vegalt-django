@@ -2,9 +2,11 @@
 
 import json
 from io import StringIO
+from smtplib import SMTPException
+from unittest import mock
 
 from django.test import TestCase
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.core import mail
@@ -154,19 +156,37 @@ class AccountViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_register_view_creates_user(self):
-        """ Test register form, user creation in db and redirection to login page. """
+        """
+        Test register form, user creation in db and redirection to login page.
+        This test have a link to test_activation_view_after_account_creation() :
+        is_active attribute from User() is set to False when creating account.
+        """
 
         data = {
             'username': 'test',
             'email': 'fake@mail.com',
             'password': 'testfakepwd',
         }
-        response = self.client.post(reverse('altproduct:register'), data=data, follow=True, HTTP_X_REQUESTED='XMLHttpRequest')
-        
+        response = self.client.post(reverse('altproduct:register'),
+                                    data=data,
+                                    follow=True,
+                                    HTTP_X_REQUESTED='XMLHttpRequest'
+                                    )
+
         fake_user = User.objects.get(email='fake@mail.com')
 
+        # Test if the user is created in db and if it's not active
         self.assertTrue(fake_user)
-        self.assertRedirects(response, reverse('altproduct:account_login'), status_code=302, target_status_code=200)
+        self.assertEqual(fake_user.is_active, False)
+        # Test if the dummy mailbox received 1 mail
+        self.assertEqual(len(mail.outbox), 1)
+        # Test if the dummy mailbox received the account activation mail
+        self.assertEqual(mail.outbox[0].subject, 'Vegalt : Activez votre compte fraîchement créé !')
+        # Test the redirection
+        self.assertRedirects(response, reverse('altproduct:account_login'),
+                             status_code=302,
+                             target_status_code=200
+                            )
 
 
 class AccountTestCase(TestCase):
@@ -199,6 +219,14 @@ class AccountTestCase(TestCase):
         self.client.login(username='FakeUser', password='fake_password')
         self.client.logout()
         self.assertRaises(KeyError, lambda: self.client.session['_auth_user_id'])
+
+    def test_account_activation_page_returns_200(self):
+        """ Account activation page with an user id returns 200. """
+
+        user = User.objects.get(username='FakeUser')
+        response = self.client.get(reverse('altproduct:activation', kwargs={'account_id': user.id}))
+
+        self.assertEqual(response.status_code, 200)
 
 
 class FavouriteProductTestCase(TestCase):
@@ -281,20 +309,26 @@ class CommandTestCase(TestCase):
 
 
 class SendEmailTestCase(TestCase):
-    """ Unit and functionnal tests for email feature with contact form. """
+    """
+    Unit and functionnal tests for email feature with
+    contact form and account creation form.
+    """
 
-    def test_send_mass_mail(self):
-        """ Test send_mass_mail() function  """
+    def test_send_mail(self):
+        """ Test send_mail() function with plain message. """
 
-        mail_1 = ('Subject 1', 'Message 1', 'from@fake.com', ['to_1@fake.com'])
-        mail_2 = ('Subject 2', 'Message 2', 'from@fake.com', ['to_2@fake.com'])
+        mail.send_mail(
+            subject='Fake subject',
+            message='Fake plain message',
+            from_email='from@fake.com',
+            recipient_list=['to_1@fake.com'],
+            fail_silently=False,
+        )
 
-        mail.send_mass_mail((mail_1, mail_2), fail_silently=False)
-
-        # Test if the dummy mailbox received 2 mails
-        self.assertEqual(len(mail.outbox), 2)
-        # Test if the dummy mailbox received the good fake mail 1
-        self.assertEqual(mail.outbox[0].subject, 'Subject 1')
+        # Test if the dummy mailbox received 1 mail
+        self.assertEqual(len(mail.outbox), 1)
+        # Test if the dummy mailbox received the good fake mail
+        self.assertEqual(mail.outbox[0].subject, 'Fake subject')
 
     def test_thanks_view_after_contact_submission(self):
         """ Test contact form and redirection to thanks page. """
@@ -304,11 +338,55 @@ class SendEmailTestCase(TestCase):
             'sender_mail': 'fake@mail.com',
             'message': 'Fake message',
         }
-        response = self.client.post(reverse('altproduct:index'), data=contact, follow=True, HTTP_X_REQUESTED='XMLHttpRequest')
+        response = self.client.post(reverse('altproduct:index'),
+                                    data=contact,
+                                    follow=True,
+                                    HTTP_X_REQUESTED='XMLHttpRequest'
+                                    )
 
-        self.assertRedirects(response, reverse('altproduct:thanks'), status_code=302, target_status_code=200)
+        self.assertRedirects(response, reverse('altproduct:thanks'),
+                             status_code=302,
+                             target_status_code=200
+                            )
 
+    def test_activation_view_after_account_creation(self):
+        """
+        Test account activation feature.
+        This test have a link with test_register_view_creates_user() :
+        is_active attribute from User() is set to True when submitting
+        'altproduct:activation' view.
+        """
 
+        user = User.objects.get(username='FakeUser')
+        self.client.get(reverse('altproduct:activation', kwargs={'account_id': user.id}))
+
+        self.assertEqual(user.is_active, True)
+
+    @mock.patch("altproduct.views.send_mail")
+    def test_smtpexception_redirects_to_error_view(self, send_mail_mock):
+        """
+        Test when SMTPException is raised after contact form submission
+        if the 'altproduct:index' view redirects to 'altproduct:error' view.
+        Requires to mock the send_mail function to raise specific exception.
+        """
+
+        send_mail_mock.side_effect = SMTPException()
+
+        contact = {
+            'name': 'Fake Name',
+            'sender_mail': 'fake@mail.com',
+            'message': 'Fake message',
+        }
+        response = self.client.post(reverse('altproduct:index'),
+                                    data=contact,
+                                    follow=True,
+                                    HTTP_X_REQUESTED='XMLHttpRequest'
+                                    )
+
+        self.assertRedirects(response, reverse('altproduct:error'),
+                             status_code=302,
+                             target_status_code=200
+                            )
 
 
 def tearDownModule():

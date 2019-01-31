@@ -38,7 +38,7 @@ def index(request):
 
             # Create email content for site owner
             subject_to_site = "Vegalt : Nouvelle demande de contact"
-            plain_message_to_site = "Bonjour Vegalt,\n\nVoici un nouveau message de " + sender_mail + " :\n\n" + message + "\n\nRépondez-lui rapidement !"
+            plain_message_to_site = "Bonjour Vegalt,\n\nVoici un nouveau message de " + name + "<" + sender_mail + "> :\n\n" + message + "\n\nRépondez-lui rapidement !"
 
             # Create confirmation email for sender
             subject_to_sender = "Vegalt : Message reçu 5/5 !"
@@ -47,6 +47,7 @@ def index(request):
 
             # Create the html message
             html_message_to_sender = render_to_string('mail.html', {
+                'username': name,
                 'content': content_to_sender,
                 'signature': signature_to_sender,
             })
