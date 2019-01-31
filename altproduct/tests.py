@@ -297,15 +297,15 @@ class FavouriteProductTestCase(TestCase):
         self.assertTrue(fake_fav_product)
 
 
-class CommandTestCase(TestCase):
-    """ Unit test for custom commands """
+# class CommandTestCase(TestCase):
+#     """ Unit test for custom commands """
 
-    def test_populate_db_command(self):
-        """ Test if custom command populate_db is working well. """
+#     def test_populate_db_command(self):
+#         """ Test if custom command populate_db is working well. """
 
-        out = StringIO()
-        call_command('populate_db', stdout=out)
-        self.assertIn('Successfully populate database', out.getvalue())
+#         out = StringIO()
+#         call_command('populate_db', stdout=out)
+#         self.assertIn('Successfully populate database', out.getvalue())
 
 
 class SendEmailTestCase(TestCase):
@@ -383,7 +383,7 @@ class SendEmailTestCase(TestCase):
                                     HTTP_X_REQUESTED='XMLHttpRequest'
                                     )
 
-        self.assertRedirects(response, reverse('altproduct:contact'),
+        self.assertRedirects(response, reverse('altproduct:error'),
                              status_code=302,
                              target_status_code=200
                             )
