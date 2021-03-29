@@ -16,7 +16,7 @@ pgcli==1.11.0
 pgspecial==1.11.2
 prompt-toolkit==1.0.15
 psycopg2==2.7.5
-Pygments==2.2.0
+Pygments==2.7.4
 pylint==2.1.1
 pytz==2018.5
 requests==2.20.0
